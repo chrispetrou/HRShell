@@ -122,8 +122,10 @@ If the command demands the existence of a new-endpoint on server-side, then:
 *   do the appropriate edits in `handlePOST()` to handle the presentation of the results.
 
 #### Script-Arguments
-__server.py__
+
 Both scripts (_server.py_ and _client.py_) can be customized through arguments:
+
+__server.py__
 ```
 $ python server.py -h
 usage: server.py [-h] [-s] [-c] [--host] [-p] [--http] [--cert] [--key]
