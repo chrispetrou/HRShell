@@ -5,7 +5,7 @@
 [![](https://img.shields.io/badge/python-2/3-yellow.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![](https://img.shields.io/badge/Build%20with-Flask-blueviolet.svg?style=flat&logo=flask&logoColor=white)](https://palletsprojects.com/p/flask/)
 ![version](https://img.shields.io/badge/version-1.0-lightgray.svg) 
-</br>
+[![Known Vulnerabilities](https://snyk.io//test/github/chrispetrou/HRShell/badge.svg?targetFile=requirements.txt)](https://snyk.io//test/github/chrispetrou/HRShell?targetFile=requirements.txt)
 
 * * *
 
