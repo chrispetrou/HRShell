@@ -1,0 +1,4 @@
+flask
+flask_talisman
+colorama
+tornado
