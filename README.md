@@ -18,6 +18,7 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 
 ### 🎉 Features
 
+*   It's stealthy
 *   __TLS__ support 🔑
     -   Either using _on-the-fly_ certificates or
     -   By specifying a cert/key pair (_more details below..._)
@@ -30,7 +31,7 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 *   It comes with two built-in servers 🌐 so far... _flask built-in_ & _tornado-WSGI_ while it's also compatible with other production servers like [`gunicorn`](http://gunicorn.org/) and [`Nginx`](https://www.nginx.com/).
 *   Both `server.py` and `client.py` are easily extensible.
 *   Since the most functionality comes from server's endpoint-design it's very easy to write a client in any other language _e.g. java, GO etc..._
-*   `screenshot` command)
+*   `screenshot` command
 
 ### Details
 
@@ -176,4 +177,4 @@ Feedback and contributions are welcome. If you find any bug or have a feature re
 
 ### License
 
-This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details.
