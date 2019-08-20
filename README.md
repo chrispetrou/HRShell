@@ -23,7 +23,7 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
     -   Either using _on-the-fly_ certificates or
     -   By specifying a cert/key pair (_more details below..._)
 *   Proxy support on client.
-*   Available `cd` command and variants.
+*   Directory navigation (`cd` command and variants).
 *   `download/upload` commands available.
 *   Pipelining (`|`) & chained commands (`;`) are supported
 *   Support for every non-interactive (_like gdb, top etc..._) command
