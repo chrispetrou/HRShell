@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.0'
+__version__     = '1.1'
 
 import os
 import re
