@@ -119,8 +119,8 @@ __Server-side:__
 If the command demands the existence of a new-endpoint on server-side, then:
 *   to define the endpoint:
     ```python
-    @app.route('/endpoint/<arg>')
-    def handler(arg):
+    @app.route('/custom_endpoint/<arg>')
+    def custom_endpoint(arg):
         """
         documentation if needed
         """
@@ -132,7 +132,7 @@ If the command demands the existence of a new-endpoint on server-side, then:
     @app.route('/')
     def handleGET():
         ...
-        return redirect(url_for('endpoint',
+        return redirect(url_for('custom_endpoint',
             arg=...)
             )
     ```
