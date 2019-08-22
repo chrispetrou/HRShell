@@ -105,7 +105,7 @@ __Note:__ If a client is connected with the server and we want to terminate the 
 
 *   A basic prerequisite for the injection to work is to have set `shellcode` variable, on client.py, to a valid shellcode.
 *   In case the injection happens on a process, then process-permissions play a very important role. It's not always possible to inject on any process due to lack of appropriate privileges.
-*    When the injection happens on the current process which in fact the the client.py, then the HTTP(S) will probably hang if the injection is successful.
+*    When the injection happens on the current process which in fact is the client.py, then the HTTP(S) will probably hang if the injection is successful.
 
 #### Creating custom commands
 __Client-side:__
