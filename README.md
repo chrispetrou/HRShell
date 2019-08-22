@@ -24,8 +24,8 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
     -   By specifying a cert/key pair (_more details below..._)
 *   Proxy support on client.
 *   Directory navigation (`cd` command and variants).
-*   `download/upload` commands available.
-*   shellcode injection (_for the time it is available only for windows x86 systems_)
+*   `download/upload/screenshot` commands available.
+*   shellcode injection 💉 (_for the time it is available only for windows x86 systems_)
     -   Either shellcode injection into another process by specifying its PID
     -   or shellcode injection in the current running process
 *   Pipelining (`|`) & chained commands (`;`) are supported
@@ -34,7 +34,6 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 *   It comes with two built-in servers 🌐 so far... _flask built-in_ & _tornado-WSGI_ while it's also compatible with other production servers like [`gunicorn`](http://gunicorn.org/) and [`Nginx`](https://www.nginx.com/).
 *   Both `server.py` and `client.py` are easily extensible.
 *   Since the most functionality comes from server's endpoint-design it's very easy to write a client in any other language _e.g. java, GO etc..._
-*   `screenshot` command
 
 ### Details
 * * *
