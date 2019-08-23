@@ -18,6 +18,7 @@ from flask import (
     redirect,
     Blueprint
 )
+from binascii import hexlify
 from flask_talisman import Talisman
 from flask.logging import default_handler
 from base64 import (
@@ -58,7 +59,7 @@ wind_path = re.compile(r'^download ((.+\\)*([^/]+))$')
 wind_upld = re.compile(r'^upload (.+\\)*([^/]+)$')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "176e68e9c627c7a18f0ce4fb8bc18f5b" # change that!
+app.config['SECRET_KEY'] = hexlify(os.urandom(16)) # you can change that to something permanent...
 errors = Blueprint('errors', __name__)
 
 
