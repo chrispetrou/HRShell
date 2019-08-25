@@ -67,13 +67,15 @@ By default client's SSL verification is disabled, unless:
     python client.py -s https://192.168.10.7:5000 --cert /path/cert.pem
     ```
 *   or the `CERT` variable, instead of the default `None` value is set beforehand with a valid certificate e.g.:
-    ```
+    ```python
+    CERT = """
     -----BEGIN CERTIFICATE-----
     MIIBoDCCAUoCAQAwDQYJKoZIhvcNAQEEBQAwYzELMAkGA1UEBhMCQVUxEzARBgNV
     BAgTClF1ZWVuc2xhbmQxGjAYBgNVBAoTEUNyeXB0U29mdCBQdHkgTHRkMSMwIQYD
     VQQDExpTZXJ2ZXIgdGVzdCBjZXJ0ICg1MTIgYml0KTAeFw05NzA5MDkwMzQxMjZa
     ...
     -----END CERTIFICATE-----
+    """
     ```
 
 > ⚠️ When `--cert/-c` is used on client-side, then it is strongly suggested that an absolute path to the certificate is given. The reason to that is that if the server send a _e.g._ `cd ../` command then because the client will actually execute this command and will change directory, if the absolute path to the certificate is not provided the connection will drop.
