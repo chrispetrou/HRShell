@@ -138,10 +138,14 @@ def validateIP(ip):
 
 
 def craft_prompt(headers, ip):
+    admin_usernames = ['root', 'Administrator', 'SYSTEM']
     username = headers.get('username')
     hostname = headers.get('hostname')
     cur_dir = headers.get('directory')
-    return "{}-{}@{}:{}~{}$ ".format(B+R+username, hostname, ip+RA+B, BL+B, cur_dir+RA)
+    if any(uname == username for uname in admin_usernames):
+        return "{}-{}@{}:{}~{}# ".format(B+R+username, hostname, ip+RA+B, BL+B, cur_dir+RA)
+    else:
+        return "{}-{}@{}:{}~{}$ ".format(B+R+username, hostname, ip+RA+B, BL+B, cur_dir+RA)
 
 
 @errors.app_errorhandler(Exception)
