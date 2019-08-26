@@ -77,6 +77,7 @@ By default client's SSL verification is disabled, unless:
     -----END CERTIFICATE-----
     """
     ```
+    In this case _client.py_ will attempt to create a hidden _.cert.pem_ file on the fly and will use that instead.
 
 #### Available commands:
 

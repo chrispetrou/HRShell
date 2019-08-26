@@ -225,8 +225,8 @@ try:
         if args.cert:
             s.verify = abs_path(args.cert)
         elif CERT:
-            with open('cert.pem', 'w') as w: w.write(CERT)
-            s.verify = abs_path("cert.pem")
+            with open('.cert.pem', 'w') as w: w.write(CERT)
+            s.verify = abs_path(".cert.pem")
         else:
             s.verify = False
 
