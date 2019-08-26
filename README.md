@@ -78,8 +78,6 @@ By default client's SSL verification is disabled, unless:
     """
     ```
 
-> ⚠️ When `--cert/-c` is used on client-side, then it is strongly suggested that an absolute path to the certificate is given. The reason to that is that if the server send a _e.g._ `cd ../` command then because the client will actually execute this command and will change directory, if the absolute path to the certificate is not provided the connection will drop.
-
 #### Available commands:
 
 Special commands:

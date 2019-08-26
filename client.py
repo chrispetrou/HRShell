@@ -148,6 +148,10 @@ def exec_cmd(cmd):
     return cmd_output.communicate()
 
 
+def abs_path(file):
+    return os.path.abspath(file)
+
+
 def is_os_64bit():
     return platform.machine().endswith('64')
 
@@ -219,10 +223,10 @@ try:
             s.proxies = {"http":'{}:{}'.format(host,int(port)),
                          "https":'{}:{}'.format(host,int(port))}
         if args.cert:
-            s.verify = args.cert
+            s.verify = abs_path(args.cert)
         elif CERT:
             with open('cert.pem', 'w') as w: w.write(CERT)
-            s.verify = "cert.pem"
+            s.verify = abs_path("cert.pem")
         else:
             s.verify = False
 
