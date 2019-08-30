@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 __author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.1'
+__version__     = '1.2'
 
 import os
 import re
 import sys
+import time
 import socket
 import logging
 from flask import (
@@ -18,6 +19,7 @@ from flask import (
     redirect,
     Blueprint
 )
+from threading import Thread
 from binascii import hexlify
 from flask_talisman import Talisman
 from flask.logging import default_handler
@@ -44,6 +46,9 @@ from tornado.httpserver import HTTPServer
 # CONSOLE-COLORS
 B, D, RA = Style.BRIGHT, Style.DIM, Style.RESET_ALL
 BL, R, C  = Fore.BLUE, Fore.RED, Fore.CYAN
+
+c1, c2, waiting = 0, 0, True
+progress = ['|', '/', '-', '\\', '|', '/', '-']
 
 log = logging.getLogger('werkzeug')
 log.disabled = True
@@ -108,6 +113,28 @@ try:
     input = raw_input
 except NameError:
     pass
+
+
+def ret(t):
+    sys.stdout.write("\033[F")
+    sys.stdout.write("\033[K")
+    time.sleep(t)
+
+
+def custom_print(x):
+    ret(.1)
+    print(x)
+
+
+def rotate():
+    global c1, c2
+    msg = list('[{}] waiting for a connection...'.format(progress[c2]))
+    msg[c1] = msg[c1].capitalize()
+    custom_print(''.join(msg))
+    c1 += 1
+    c2 += 1
+    if c1 == len(msg): c1 = 0
+    if c2 == len(progress): c2 = 0
 
 
 def ValidateFile(file):
@@ -283,8 +310,25 @@ def download(filepath):
     return emptyresponse
 
 
+@app.before_first_request
+def stop_loading():
+    global waiting
+    waiting = False
+    time.sleep(.1)
+    ret(.1)
+
+
+def loading():
+    print('')
+    while waiting==True:
+        rotate()
+
+
 if __name__ == '__main__':
     args = console()
+    t = Thread(target=loading)
+    t.daemon = True
+    t.start()
     if args.client:
         clientIP = args.client
     if args.server=='flask':

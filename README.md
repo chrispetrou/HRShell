@@ -9,7 +9,7 @@
 
 * * *
 
-<img src="images/1.png" width="80%">
+<img src="images/parrot.svg" width="80%">
 
 __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible with __python 2.x/3.x__ and has been successfully tested on:
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=linux&linux&logoColor=black) Linux ubuntu 18.04 LTS
