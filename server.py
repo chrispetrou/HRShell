@@ -48,7 +48,7 @@ B, D, RA = Style.BRIGHT, Style.DIM, Style.RESET_ALL
 BL, R, C  = Fore.BLUE, Fore.RED, Fore.CYAN
 
 c1, c2, waiting = 0, 0, True
-progress = ['|', '/', '-', '\\', '|', '/', '-']
+progress = ['|', '/', '-', '\\']
 
 log = logging.getLogger('werkzeug')
 log.disabled = True
