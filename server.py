@@ -19,6 +19,7 @@ from flask import (
     redirect,
     Blueprint
 )
+from random import randint
 from threading import Thread
 from binascii import hexlify
 from flask_talisman import Talisman
@@ -48,7 +49,13 @@ B, D, RA = Style.BRIGHT, Style.DIM, Style.RESET_ALL
 BL, R, C  = Fore.BLUE, Fore.RED, Fore.CYAN
 
 c1, c2, waiting = 0, 0, True
-progress = ['|', '/', '-', '\\']
+progress = {
+    0 : ['|', '/', '-', '\\'],
+    1 : ['◥', '◢', '◣', '◤'],
+    2 : ['⊢', '⊤', '⊣', '⊥'],
+    3 : ['◎', '◉', '●'],
+    4 : ['❐', '❏']
+}
 
 log = logging.getLogger('werkzeug')
 log.disabled = True
@@ -126,9 +133,9 @@ def custom_print(x):
     print(x)
 
 
-def rotate():
+def rotate(progress):
     global c1, c2
-    msg = list('[{}] waiting for a connection...'.format(progress[c2]))
+    msg = list('[{}] waiting for a connection...'.format(C+progress[c2]+RA))
     msg[c1] = msg[c1].capitalize()
     custom_print(''.join(msg))
     c1 += 1
@@ -320,8 +327,9 @@ def stop_loading():
 
 def loading():
     print('')
+    prog = progress[randint(0, 4)]
     while waiting==True:
-        rotate()
+        rotate(prog)
 
 
 if __name__ == '__main__':

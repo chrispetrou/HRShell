@@ -2,3 +2,4 @@ flask
 flask_talisman
 colorama
 tornado
+pyopenssl
