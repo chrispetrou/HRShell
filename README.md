@@ -3,9 +3,9 @@
 
 ##### HRShell: An advanced HTTP(S) Reverse Shell built with Flask
 [![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/chrispetrou/HRShell/blob/master/LICENSE) 
-[![](https://img.shields.io/badge/python-2/3-yellow.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![](https://img.shields.io/badge/python-3-yellow.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![](https://img.shields.io/badge/Build%20with-Flask-blueviolet.svg?style=flat&logo=flask&logoColor=white)](https://palletsprojects.com/p/flask/)
-![version](https://img.shields.io/badge/version-1.1-lightgray.svg) 
+![version](https://img.shields.io/badge/version-1.2-lightgray.svg) 
 [![Known Vulnerabilities](https://snyk.io//test/github/chrispetrou/HRShell/badge.svg?targetFile=requirements.txt)](https://snyk.io//test/github/chrispetrou/HRShell?targetFile=requirements.txt)
 
 * * *
@@ -14,7 +14,7 @@
 </div>
 <br>
 
-__HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible with __python 2.x/3.x__ and has been successfully tested on:
+__HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible with __python 3.x__ and has been successfully tested on:
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=linux&linux&logoColor=black) Linux ubuntu 18.04 LTS
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=apple&windows&logoColor=black) macOS Mojave
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=windows&windows&logoColor=black) Windows 7/10
@@ -25,10 +25,10 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 *   __TLS__ support 🔑
     -   Either using _on-the-fly_ certificates or
     -   By specifying a cert/key pair (_more details below..._)
-*   Proxy support on client.
+*   Proxy 🦊 support on client.
 *   Directory navigation (`cd` command and variants).
 *   `download/upload/screenshot` commands available.
-*   shellcode injection 💉 (_for the time it is available only for windows x86 systems_)
+*   shellcode injection 💉 (_for the time it is available only for windows x86 systems but support for other OSs and ARCHs will be added soon!_)
     -   Either shellcode injection into another process by specifying its PID
     -   or shellcode injection in the current running process
 *   Pipelining (`|`) & chained commands (`;`) are supported

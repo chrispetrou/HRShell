@@ -108,11 +108,6 @@ def console():
     args = parser.parse_args()
     return args
 
-try:
-    input = raw_input
-except NameError:
-    pass
-
 def ret(t):
     sys.stdout.write("\033[F")
     sys.stdout.write("\033[K")
@@ -219,13 +214,13 @@ def handleGET():
         if cmd:
             if unix_path.match(cmd):
                 return redirect(url_for('download',
-                    filepath=benc(unix_path.search(cmd).group(1)))
+                    filepath=benc(unix_path.search(cmd).group(1).encode()))
                 )
             elif unix_upld.match(cmd):
                 filepath = cmd.split()[1]
                 if valid_file(filepath):
-                    file_name = unix_upld.search(cmd).group(2)
-                    with open(filepath) as f:
+                    file_name = unix_upld.search(cmd).group(2).encode()
+                    with open(filepath, 'rb') as f:
                         upload_contents = benc(f.read())
                     return redirect(url_for('upload',
                         filename=file_name)
@@ -234,13 +229,13 @@ def handleGET():
                     abort(404)
             elif wind_path.match(cmd):
                 return redirect(url_for('download',
-                    filepath=benc(wind_path.search(cmd).group(1)))
+                    filepath=benc(wind_path.search(cmd).group(1).encode()))
                 )
             elif wind_upld.match(cmd):
                 filepath = cmd.split()[1]
                 if valid_file(filepath):
-                    file_name = wind_upld.search(cmd).group(2)
-                    with open(filepath) as f:
+                    file_name = wind_upld.search(cmd).group(2).encode()
+                    with open(filepath, 'rb') as f:
                         upload_contents = benc(f.read())
                     return redirect(url_for('upload',
                         filename=file_name)
@@ -272,13 +267,13 @@ def handlePOST():
         if request.headers.get('Filename'):
             filename = request.headers.get('Filename')
             if request.headers.get('Action') == 'download':
-                with open(filename, 'w') as w:
+                with open(filename, 'wb') as w:
                     w.write(bdec(request.data))
                 print('{} successfully downloaded!'.format(filename))
             else:
                 print('{} successfully uploaded!'.format(filename))
         else:
-            print(request.data[:-1])
+            print(request.data[:-1].decode())
     return emptyresponse
 
 
