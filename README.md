@@ -5,7 +5,7 @@
 [![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/LICENSE) 
 [![](https://img.shields.io/badge/python-3-yellow.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![](https://img.shields.io/badge/Build%20with-Flask-blueviolet.svg?style=flat-square&logo=flask&logoColor=white)](https://palletsprojects.com/p/flask/)
-[![version](https://img.shields.io/badge/version-1.2-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
+[![version](https://img.shields.io/badge/version-1.3-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
 [![Known Vulnerabilities](https://snyk.io//test/github/chrispetrou/HRShell/badge.svg?style=flat-square&targetFile=requirements.txt)](https://snyk.io//test/github/chrispetrou/HRShell?targetFile=requirements.txt)
 
 * * *
@@ -25,12 +25,14 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 *   __TLS__ support 🔑
     -   Either using _on-the-fly_ certificates or
     -   By specifying a cert/key pair (_more details below..._)
+*   Shellcode injection 💉 (_more details below..._)
+    -   Either shellcode injection in a thread of the current running process
+        *   Platforms supported so far: __Unix x86/x64, Windows x86__
+    -   or shellcode injection into another process by specifying its PID
+        *   Platforms supported so far: __Windows x86__    
 *   Proxy 🦊 support on client.
 *   Directory navigation (`cd` command and variants).
 *   `download/upload/screenshot` commands available.
-*   shellcode injection 💉 (_for the time it is available only for windows x86 systems but support for other OSs and ARCHs will be added soon!_)
-    -   Either shellcode injection into another process by specifying its PID
-    -   or shellcode injection in the current running process
 *   Pipelining (`|`) & chained commands (`;`) are supported
 *   Support for every non-interactive (_like gdb, top etc..._) command
 *   Server is both HTTP & HTTPS capable.
@@ -84,6 +86,21 @@ By default client's SSL verification is disabled, unless:
     ```
     In this case _client.py_ will attempt to create a hidden _.cert.pem_ file on the fly and will use that instead.
 
+#### Shellcode injection
+
+There are two "modes" of shellcode injection using the two following commands respectively:
+
+1. `inject shellcode`: Using this command a new thread of our current process is created and the shellcode injection occurs in its memory space. As a result our HTTP(S) shell is not affected by the injection. The platforms where this command can be applied are: __Unix x86/x64, Windows x86__ platforms!
+
+2. `migrate <PID>`: Using this command we can inject shellcode into the memory space of another process by specifying its PID. For now this command can only be applied at __Windows x86__ platforms!
+
+<img src="images/2.png">
+
+##### Notes
+
+*   A basic prerequisite for the injection to work is to have set `shellcode` variable, on client.py, to a valid shellcode.
+*   In case the injection happens on a process, then process-permissions play a very important role. It's not always possible to inject on any process due to lack of appropriate privileges.
+
 #### Available commands:
 
 Special commands:
@@ -92,7 +109,7 @@ upload <file or path-to-file>: uploads a file to the client
 download <file or path-to-file>: downloads a file from the client
 screenshot: downloads a screenshot from the client and then deletes it
 migrate <PID>: attempts to inject shellcode on the process with the specific PID
-inject shellcode: injects shellcode into current process
+inject shellcode: injects shellcode into a thread of current process
 clear: clears the screen (it's the same for both unix and windows systems)
 exit: closes the connection with the client
 ```
@@ -100,18 +117,6 @@ exit: closes the connection with the client
 Any other command is supported if it's __not__ interactive like _e.g. gdb, top etc..._ Also by typing `python server.py -h` or `python client.py -h` you can get information the server and client available arguments.
 
 __Note:__ If a client is connected with the server and we want to terminate the server, before press <kbd>CTRL</kbd>+<kbd>C</kbd>, we have to close the connection using the `exit` command.
-
-#### Shellcode injection
-
-> ⚠️ For now shellcode injection can be performed only in x86 windows systems.
-
-<img src="images/2.png">
-
-##### Notes
-
-*   A basic prerequisite for the injection to work is to have set `shellcode` variable, on client.py, to a valid shellcode.
-*   In case the injection happens on a process, then process-permissions play a very important role. It's not always possible to inject on any process due to lack of appropriate privileges.
-*    When the injection happens on the current process which in fact is the client.py, then the HTTP(S) will probably hang if the injection is successful. This won't happen if the injection refers to another process (_migration_).
 
 #### Creating custom commands
 __Client-side:__
@@ -196,8 +201,10 @@ Feedback and contributions are welcome. If you find any bug or have a feature re
 ### Disclaimer
 >This tool is only for testing and academic purposes and can only be used where strict consent has been given. Do not use it for illegal purposes! It is the end user’s responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this tool and software in general.
 
-### Credits
+### Credits & References
 
+*   Seitz J. Gray Hat Python: Python programming for hackers and reverse engineers. no starch press; 2009 Apr 15.
+*   [PyShellCode](https://github.com/thomaskeck/PyShellCode)
 *   The HRShell logo is made with [fontmeme.com](https://fontmeme.com/graffiti-fonts/)!
 
 ### License

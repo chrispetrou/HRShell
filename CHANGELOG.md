@@ -1,6 +1,14 @@
+#### Version 1.3 (_TBA)
+
+*   More features & bug fixes!
+
 #### Version 1.3 (_In progress_)
 
-*   More features!
+*   Shellcode injection into the current process now works for more platforms. The platforms supported are:
+    *   __Unix x86__
+    *   __Unix x64__
+    *   __Windows x86__   
+Also now instead of injecting directly into the current process the shellcode injection takes place into the memory space of a current's process thread. As a result the HTTP(S) shell does not gets affected in any wat by the shellcode injection!
 
 #### Version 1.2
 

