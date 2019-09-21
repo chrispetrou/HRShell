@@ -86,7 +86,7 @@ By default client's SSL verification is disabled, unless:
     ```
     In this case _client.py_ will attempt to create a hidden _.cert.pem_ file on the fly and will use that instead.
 
-#### Shellcode injection
+#### Shellcode injection 💉
 
 There are two "modes" of shellcode injection using the two following commands respectively:
 
