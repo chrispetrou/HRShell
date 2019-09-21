@@ -7,6 +7,7 @@ __version__     = '1.2'
 import os
 import re
 import sys
+import ssl
 import time
 import socket
 import logging
