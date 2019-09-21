@@ -118,6 +118,13 @@ def custom_print(x):
     ret(.1)
     print(x)
 
+def slowprint(s):
+    if not s.endswith('\n'): s += "\n"
+    for _ in s:
+        sys.stdout.write(_)
+        sys.stdout.flush()
+        time.sleep(.01)
+
 def rotate(progress):
     global c1, c2
     msg = list('[{}] waiting for a connection...'.format(C+progress[c2]+RA))
@@ -249,9 +256,7 @@ def handleGET():
             elif exit_cmd.match(cmd):
                 cmd_contents = cmd
                 waiting = True
-                t = Thread(target=loading)
-                t.daemon = True
-                t.start()
+                startloading()
                 return redirect(url_for('commander'))
             else:
                 cmd_contents = cmd
@@ -312,14 +317,17 @@ def loading():
     while waiting==True:
         rotate(prog)
 
-if __name__ == '__main__':
-    args = console()
+def startloading():
     t = Thread(target=loading)
     t.daemon = True
     t.start()
+
+if __name__ == '__main__':
+    args = console()
     if args.client:
         clientIP = args.client
     if args.server=='flask':
+        startloading()
         if args.http:
             app.run(host=args.host, port=args.port, debug=False)
         else:
@@ -330,10 +338,10 @@ if __name__ == '__main__':
                 app.run(host=args.host, port=args.port, debug=False, ssl_context='adhoc')
     else:
         if args.http:
-            print("* Serving on: {}http://{}:{}{}".format(B+BL, args.host, args.port, RA))
+            slowprint("* Serving on: {}http://{}:{}{}".format(B+BL, args.host, args.port, RA))
             http_server = HTTPServer(WSGIContainer(app))
         elif args.cert and args.key:
-            print("* Serving on: {}https://{}:{}{}".format(B+BL, args.host, args.port, RA))
+            slowprint("* Serving on: {}https://{}:{}{}".format(B+BL, args.host, args.port, RA))
             Talisman(app)
             ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             ssl_ctx.load_cert_chain(args.cert, args.key)
@@ -341,7 +349,8 @@ if __name__ == '__main__':
         else:
             print("{}ERROR:{} Both cert and key must be specified\nor disable TLS with --http option.".format(B, RA))
             sys.exit(0)
-        print("* {}Server:{} Tornado-WSGI".format(B, RA))
+        slowprint("* {}Server:{} Tornado-WSGI".format(B, RA))
+        startloading()
         try:
             http_server.listen(args.port, address=args.host)
             IOLoop.instance().start()
