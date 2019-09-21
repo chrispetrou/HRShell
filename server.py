@@ -342,7 +342,6 @@ if __name__ == '__main__':
             print("{}ERROR:{} Both cert and key must be specified\nor disable TLS with --http option.".format(B, RA))
             sys.exit(0)
         print("* {}Server:{} Tornado-WSGI".format(B, RA))
-        print("{}* Waiting for connection...{}".format(B+D, RA))
         try:
             http_server.listen(args.port, address=args.host)
             IOLoop.instance().start()
