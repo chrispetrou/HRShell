@@ -2,7 +2,7 @@
 
 *   More features & bug fixes!
 
-#### Version 1.3
+#### Version 1.3 (_22-09-2019_)
 
 *   Shellcode injection into the current process now works for more platforms. The platforms supported are:
     *   __Unix x86__
@@ -10,11 +10,11 @@
     *   __Windows x86__   
 Also now instead of injecting directly into the current process the shellcode injection takes place into the memory space of a current's process thread. As a result the HTTP(S) shell does not gets affected in any wat by the shellcode injection!
 
-#### Version 1.2
+#### Version 1.2 (_20-09-2019_)
 
 *   Python 2.x compatibility removed since there were some bugs regarding some present and future features.
 
-#### Version 1.1
+#### Version 1.1 (_20-08-2019_)
 
 *   It's stealthy
 *   __TLS__ support 🔑
