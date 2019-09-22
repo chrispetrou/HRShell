@@ -2,7 +2,7 @@
 
 *   More features & bug fixes!
 
-#### Version 1.3 (_In progress_)
+#### Version 1.3
 
 *   Shellcode injection into the current process now works for more platforms. The platforms supported are:
     *   __Unix x86__
