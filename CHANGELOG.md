@@ -1,4 +1,4 @@
-#### Version 1.4 (_TBA)
+#### Version 1.4 (_TBA_)
 
 *   More features & bug fixes!
 
