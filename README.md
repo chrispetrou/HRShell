@@ -5,7 +5,7 @@
 [![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/LICENSE) 
 [![](https://img.shields.io/badge/python-3-yellow.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![](https://img.shields.io/badge/Build%20with-Flask-blueviolet.svg?style=flat-square&logo=flask&logoColor=white)](https://palletsprojects.com/p/flask/)
-[![version](https://img.shields.io/badge/version-1.3-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
+[![version](https://img.shields.io/badge/version-1.4-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
 [![Known Vulnerabilities](https://snyk.io//test/github/chrispetrou/HRShell/badge.svg?style=flat-square&targetFile=requirements.txt)](https://snyk.io//test/github/chrispetrou/HRShell?targetFile=requirements.txt)
 
 * * *
@@ -27,9 +27,14 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
     -   By specifying a cert/key pair (_more details below..._)
 *   Shellcode injection 💉 (_more details below..._)
     -   Either shellcode injection in a thread of the current running process
-        *   Platforms supported so far: __Unix x86/x64, Windows x86__
-    -   or shellcode injection into another process by specifying its PID
-        *   Platforms supported so far: __Windows x86__    
+        *   Platforms supported so far: 
+            *   __Windows x86__   
+            *   __Unix x86__
+            *   __Unix x64__
+    -   or shellcode injection into another process (`migrate <PID>`) by specifying its PID
+        *   Platforms supported so far: 
+            *   __Windows x86__
+            *   __Windows x64__    
 *   Proxy 🦊 support on client.
 *   Directory navigation (`cd` command and variants).
 *   `download/upload/screenshot` commands available.
@@ -92,7 +97,7 @@ There are two "modes" of shellcode injection using the two following commands re
 
 1. `inject shellcode`: Using this command a new thread of our current process is created and the shellcode injection occurs in its memory space. As a result our HTTP(S) shell is not affected by the injection. The platforms where this command can be applied are: __Unix x86/x64, Windows x86__ platforms!
 
-2. `migrate <PID>`: Using this command we can inject shellcode into the memory space of another process by specifying its PID. For now this command can only be applied at __Windows x86__ platforms!
+2. `migrate <PID>`: Using this command we can inject shellcode into the memory space of another process by specifying its PID. For now this command can only be applied at __Windows x86/x64__ platforms!
 
 <img src="images/2.png">
 

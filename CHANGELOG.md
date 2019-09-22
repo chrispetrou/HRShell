@@ -1,6 +1,10 @@
-#### Version 1.4 (_TBA_)
+#### Version 1.5 (_TBA_)
 
 *   More features & bug fixes!
+
+#### Version 1.4 (_22-09-2019_)
+
+*   `migrate <PID>` command now works for both x86 and x64 Windows systems!
 
 #### Version 1.3 (_22-09-2019_)
 

