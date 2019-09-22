@@ -189,6 +189,8 @@ def inject_shellcode_unix(s):
             data='Shellcode injection failed...\nERROR: {}'.format(error)
         )
 
+# Inspired, taken and adapted from this great article:
+# http://www.debasish.in/2012/04/execute-shellcode-using-python.html
 def inject_shellcode_windows(s):
     try:
         arg_address = kernel32.VirtualAlloc(0, len(shellcode), VIRTUAL_MEM, PAGE_EXECUTE_READWRITE)

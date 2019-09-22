@@ -210,6 +210,7 @@ Feedback and contributions are welcome. If you find any bug or have a feature re
 
 *   Seitz J. Gray Hat Python: Python programming for hackers and reverse engineers. no starch press; 2009 Apr 15.
 *   [PyShellCode](https://github.com/thomaskeck/PyShellCode)
+*   A great article found [here](http://www.debasish.in/2012/04/execute-shellcode-using-python.html).
 *   The HRShell logo is made with [fontmeme.com](https://fontmeme.com/graffiti-fonts/)!
 
 ### License
