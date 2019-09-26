@@ -95,9 +95,11 @@ By default client's SSL verification is disabled, unless:
 
 There are two "modes" of shellcode injection using the two following commands respectively:
 
-1. `inject shellcode`: Using this command a new thread of our current process is created and the shellcode injection occurs in its memory space. As a result our HTTP(S) shell is not affected by the injection. The platforms where this command can be applied are: __Unix x86/x64, Windows x86__ platforms!
+1. `migrate <PID>`: Using this command we can inject shellcode into the memory space of another process by specifying its PID. For now this command can only be applied at __Windows x86/x64__ platforms!
 
-2. `migrate <PID>`: Using this command we can inject shellcode into the memory space of another process by specifying its PID. For now this command can only be applied at __Windows x86/x64__ platforms!
+<img src="images/1.png">
+
+2. `inject shellcode`: Using this command a new thread of our current process is created and the shellcode injection occurs in its memory space. As a result our HTTP(S) shell is not affected by the injection. The platforms where this command can be applied are: __Unix x86/x64, Windows x86__ platforms!
 
 <img src="images/2.png">
 
