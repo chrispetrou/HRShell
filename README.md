@@ -50,7 +50,7 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 ### Details
 * * *
 
-#### TLS 🔑
+### TLS 🔑
 
 __Server-side:__
 Unless `--http` option is specified, by default `server.py` is HTTPS using _on-the-fly_ certificates, since on-the-fly certificates are a built-in flask-feature. But if `-s tornado` option is specified in order to make the server use TLS, a `--cert` and a `--key` option must be specified like so:
@@ -91,7 +91,7 @@ By default client's SSL verification is disabled, unless:
     ```
     In this case _client.py_ will attempt to create a hidden _.cert.pem_ file on the fly and will use that instead.
 
-#### Shellcode injection 💉
+### Shellcode injection 💉
 
 There are two "modes" of shellcode injection using the two following commands respectively:
 
@@ -106,7 +106,7 @@ There are two "modes" of shellcode injection using the two following commands re
 *   A basic prerequisite for the injection to work is to have set `shellcode` variable, on client.py, to a valid shellcode.
 *   In case the injection happens on a process, then process-permissions play a very important role. It's not always possible to inject on any process due to lack of appropriate privileges.
 
-#### Available commands:
+### Available commands:
 
 Special commands:
 ```
@@ -123,7 +123,7 @@ Any other command is supported if it's __not__ interactive like _e.g. gdb, top e
 
 __Note:__ If a client is connected with the server and we want to terminate the server, before press <kbd>CTRL</kbd>+<kbd>C</kbd>, we have to close the connection using the `exit` command.
 
-#### Creating custom commands
+### Creating custom commands
 __Client-side:__
 
 In order to create a _custom_ command, generally:
