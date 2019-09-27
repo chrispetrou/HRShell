@@ -5,7 +5,7 @@
 [![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/LICENSE) 
 [![](https://img.shields.io/badge/python-3-yellow.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![](https://img.shields.io/badge/Build%20with-Flask-blueviolet.svg?style=flat-square&logo=flask&logoColor=white)](https://palletsprojects.com/p/flask/)
-[![version](https://img.shields.io/badge/version-1.4-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
+[![version](https://img.shields.io/badge/version-1.5-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
 [![Known Vulnerabilities](https://snyk.io//test/github/chrispetrou/HRShell/badge.svg?style=flat-square&targetFile=requirements.txt)](https://snyk.io//test/github/chrispetrou/HRShell?targetFile=requirements.txt)
 
 * * *
@@ -34,7 +34,8 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
     -   or shellcode injection into another process (`migrate <PID>`) by specifying its PID
         *   Platforms supported so far: 
             *   __Windows x86__
-            *   __Windows x64__    
+            *   __Windows x64__
+*   Shellcode can be set/modified on the fly from the server (_more details below..._)   
 *   Proxy 🦊 support on client.
 *   Directory navigation (`cd` command and variants).
 *   `download/upload/screenshot` commands available.
@@ -105,8 +106,20 @@ There are two "modes" of shellcode injection using the two following commands re
 
 ##### Notes
 
-*   A basic prerequisite for the injection to work is to have set `shellcode` variable, on client.py, to a valid shellcode.
 *   In case the injection happens on a process, then process-permissions play a very important role. It's not always possible to inject on any process due to lack of appropriate privileges.
+
+### Set/Modify shellcode
+
+There are two ways you can specify/set what type of shellcode you want the client to execute:
+
+*   Either pre-set `shellcode` variable on `client.py` script to be a valid shellcode or
+*   Use the `set shellcode <shellcode-id>` command to do that on the fly. With this command you can update your shellcode on client-side from server-side as many times as you like!
+
+<img src="images/3.png" width="60%">
+
+The first way is pretty straight forward. However in order to use the second and more convenient way (_since you can also modify an already specified shellcode_) you have to set `shellcodes/utils.py` script such that it contains the shellcode(s) of your choise. The script contains an example of how you can do that.
+
+> ❗️You can modify/update `shellcodes/utils.py` script even after you've launched `server.py` as many times as you want, since `server.py` will dynamically use the most updated/recent version. In this way you can set & modify shellcodes on the go...
 
 ### Available commands:
 
@@ -117,6 +130,8 @@ download <file or path-to-file>: downloads a file from the client
 screenshot: downloads a screenshot from the client and then deletes it
 migrate <PID>: attempts to inject shellcode on the process with the specific PID
 inject shellcode: injects shellcode into a thread of current process
+show shellcodes: shows all available to use shellcodes based on 'shellcodes/utils.py' script
+set shellcode <shellcode-id>: set shellcode to a custom shellcode specified by its id
 clear: clears the screen (it's the same for both unix and windows systems)
 exit: closes the connection with the client
 ```

