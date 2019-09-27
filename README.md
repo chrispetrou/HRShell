@@ -19,7 +19,7 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=apple&windows&logoColor=black) macOS Mojave
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=windows&windows&logoColor=black) Windows 7/10
 
-### 🎉 Features
+### Features
 
 *   It's stealthy
 *   __TLS__ support 🔑
@@ -36,7 +36,7 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
             *   __Windows x86__
             *   __Windows x64__
 *   Shellcode can be set/modified on the fly from the server (_more details below..._)   
-*   Proxy 🦊 support on client.
+*   Proxy support on client.
 *   Directory navigation (`cd` command and variants).
 *   `download/upload/screenshot` commands available.
 *   Pipelining (`|`) & chained commands (`;`) are supported
@@ -119,22 +119,13 @@ There are two ways you can specify/set what type of shellcode you want the clien
 
 The first way is pretty straight forward. However in order to use the second and more convenient way (_since you can also modify an already specified shellcode_) you have to set `shellcodes/utils.py` script such that it contains the shellcode(s) of your choise. The script contains an example of how you can do that.
 
-> ❗️You can modify/update `shellcodes/utils.py` script even after you've launched `server.py` as many times as you want, since `server.py` will dynamically use the most updated/recent version. In this way you can set & modify shellcodes on the go...
+> ⚠️ You can modify/update `shellcodes/utils.py` script even after you've launched `server.py` as many times as you want, since `server.py` will dynamically use the most updated/recent version. In this way you can set & modify shellcodes on the go...
 
 ### Available commands:
 
 Special commands:
-```
-upload <file or path-to-file>: uploads a file to the client
-download <file or path-to-file>: downloads a file from the client
-screenshot: downloads a screenshot from the client and then deletes it
-migrate <PID>: attempts to inject shellcode on the process with the specific PID
-inject shellcode: injects shellcode into a thread of current process
-show shellcodes: shows all available to use shellcodes based on 'shellcodes/utils.py' script
-set shellcode <shellcode-id>: set shellcode to a custom shellcode specified by its id
-clear: clears the screen (it's the same for both unix and windows systems)
-exit: closes the connection with the client
-```
+
+<img src="images/4.png">
 
 Any other command is supported if it's __not__ interactive like _e.g. gdb, top etc..._ Also by typing `python server.py -h` or `python client.py -h` you can get information the server and client available arguments.
 
