@@ -119,7 +119,7 @@ There are two ways you can specify/set what type of shellcode you want the clien
 
 The first way is pretty straight forward. However in order to use the second and more convenient way (_since you can also modify an already specified shellcode_) you have to set `shellcodes/utils.py` script such that it contains the shellcode(s) of your choise. The script contains an example of how you can do that.
 
-> ⚠️ You can modify/update `shellcodes/utils.py` script even after you've launched `server.py` as many times as you want, since `server.py` will dynamically use the most updated/recent version. In this way you can set & modify shellcodes on the go...
+> 💡 You can modify/update `shellcodes/utils.py` script even after you've launched `server.py` as many times as you want, since `server.py` will dynamically use the most updated/recent version. In this way you can set & modify shellcodes on the go...
 
 ### Available commands:
 
@@ -197,11 +197,13 @@ arguments:
   -p , --proxy    Specify a proxy to use [form: host:port]
 ```
 
-### Requirements:
+### 📦 Requirements:
 
-**Note:** To install the server-requirements:
+To install the server-requirements:
 
-`pip install -r requirements.txt --upgrade --user`
+```
+pip install -r requirements.txt --upgrade --user
+```
 
 #### TODO
 - [ ] Add more commands and features.
