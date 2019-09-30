@@ -53,11 +53,14 @@ BL, R, C, Y  = Fore.BLUE, Fore.RED, Fore.CYAN, Fore.YELLOW
 
 c1, c2, waiting = 0, 0, True
 progress = {
-    0 : ['|', '/', '-', '\\'],
-    1 : ['◥', '◢', '◣', '◤'],
-    2 : ['⊢', '⊤', '⊣', '⊥'],
-    3 : ['◎', '◉', '●'],
-    4 : ['❐', '❏']
+    0 : ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'],
+    1 : ['|', '/', '-', '\\'],
+    2 : ['◥', '◢', '◣', '◤'],
+    3 : ['⊢', '⊤', '⊣', '⊥'],
+    4 : ['⊔', '⊏', '⊓', '⊐'],
+    5 : ['◎', '◉', '●'],
+    6 : ['⨁', '⨂'],
+    7 : ['❐', '❏']
 }
 
 log = logging.getLogger('werkzeug')
@@ -131,12 +134,12 @@ def slowprint(s):
 
 def rotate(progress):
     global c1, c2
-    msg = list('[{}] waiting for a connection...'.format(C+progress[c2]+RA))
+    msg = list('waiting for a connection...')
     msg[c1] = msg[c1].capitalize()
-    custom_print(''.join(msg))
+    custom_print('{} '.format(C+progress[c2]+RA) + ''.join(msg))
     c1 += 1
     c2 += 1
-    if c1 == len(msg): c1 = 0
+    if c1 == len(msg)-3: c1 = 0
     if c2 == len(progress): c2 = 0
 
 def ValidateFile(file):
@@ -350,11 +353,13 @@ def stop_loading():
 
 def loading():
     print('')
-    prog = progress[randint(0, 4)]
+    prog = progress[randint(0, 7)]
     while waiting==True:
         rotate(prog)
 
 def startloading():
+    global c1, c2
+    c1, c2 = 0, 0
     t = Thread(target=loading)
     t.daemon = True
     t.start()
