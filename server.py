@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__author__      = 'Christophoros Petrou (game0ver)'
-__version__     = '1.5'
+__Author__      = 'Christophoros Petrou (game0ver)'
+__Project_url__ = 'https://github.com/chrispetrou/HRShell'
+__License__     = 'GNU General Public License v3.0'
+__Version__     = '1.5'
 
 import os
 import re
