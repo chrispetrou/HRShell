@@ -10,7 +10,7 @@
 
 * * *
 
-<img src="images/preview.svg" width="70%">
+<img src="images/preview.svg" width="80%">
 </div>
 <br>
 
