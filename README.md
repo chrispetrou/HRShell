@@ -51,6 +51,9 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 ### Details
 * * *
 
+### Stealthy :squirrel:
+HRShell is stealthy since it uses the HTTP(S) protocol as the communication method between client and server. In addition when TLS is in use the traffic is also encrypted. Also if the CERT is not hand coded on client-side (_which is a feasible option_) and the `upload` command is not used, then `client.py` doesn't touches the disk at all.
+
 ### TLS 🔑
 
 __Server-side:__
