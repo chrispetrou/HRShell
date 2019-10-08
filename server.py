@@ -169,14 +169,18 @@ def validateIP(ip):
         raise ArgumentTypeError('[x] Invalid IP provided')
 
 def craft_prompt(headers, ip):
-    admin_usernames = ['root', 'Administrator', 'SYSTEM']
-    username = headers.get('username')
-    hostname = headers.get('hostname')
-    cur_dir = headers.get('directory')
-    if any(uname == username for uname in admin_usernames):
-        return "{}-{}@{}:{}~{}# ".format(B+R+username, hostname, ip+RA+B, BL+B, cur_dir+RA)
-    else:
-        return "{}-{}@{}:{}~{}$ ".format(B+R+username, hostname, ip+RA+B, BL+B, cur_dir+RA)
+    try:
+        admin_usernames = ['root', 'Administrator', 'SYSTEM']
+        username = headers.get('username')
+        hostname = headers.get('hostname')
+        cur_dir = headers.get('directory')
+        if any(uname == username for uname in admin_usernames):
+            return f"{B+R+username}-{hostname}@{ip+RA+B}:{BL+B}~{cur_dir+RA}# "
+        else:
+            return f"{B+R+username}-{hostname}@{ip+RA+B}:{BL+B}~{cur_dir+RA}$ "
+    except TypeError:
+        print(f"[{B}INFO{RA}] Probably a {B}browser{RA} connected from: {B+ip+RA}")
+        abort(403)
 
 @errors.app_errorhandler(Exception)
 def handle_unexpected_error(error):
@@ -195,7 +199,7 @@ def internal_server_error(e):
 
 @app.errorhandler(403)
 def error_403(e):
-    return emptyresponse
+    return ("", 403)
 
 @app.errorhandler(404)
 def error_404(e):
