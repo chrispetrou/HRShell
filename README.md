@@ -77,8 +77,7 @@ python server.py --cert /path/cert.pem --key /path/key.pem
 > ⚠️ If the server is using TLS, then by design the client can't use `http://...` to connect to the server, but must explicitly use `https` instead.
 
 __Client-side:__
-By default client's SSL _verification_ is disabled (_of course that **doesn't** mean that TLS is disabled too, **TLS will be enabled**
- if server uses it - so TLS depends completely on the server_), unless:
+By default client's SSL _verification_ is disabled, unless:
 *   either the `--cert` parameter is specified e.g.:
     ```
     python client.py -s https://192.168.10.7:5000 --cert /path/cert.pem
@@ -95,6 +94,8 @@ By default client's SSL _verification_ is disabled (_of course that **doesn't** 
     """
     ```
     In this case _client.py_ will attempt to create a hidden _.cert.pem_ file on the fly and will use that instead.
+
+> ⚠️ That the SSL verification is disabled by default on client **doesn't** mean in any case that the TLS is disabled too, **TLS will be enabled** if the server uses it - so **TLS depends completely on the server**. The `--cert` option _on client_ is there just as an alternative way for the server-client to have an encrypted session and that's all. 
 
 ### Shellcode injection 💉
 
