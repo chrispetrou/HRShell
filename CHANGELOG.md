@@ -1,6 +1,12 @@
-#### Version 1.6 (_TBA_)
+#### Version 1.7 (_TBA_)
 
 *   More features & bug fixes!
+
+#### Version 1.6 (_08-10-2019_)
+
+*   `screenshot` command __doesn't__ store the screenshot captured on the client and then trasmits it to server, __but__ directly transmits it to the server avoiding to touch the disk on client.
+*   Direct browser connections are not allowed.
+*   `help` command added.
 
 #### Version 1.5 (_28-09-2019_)
 

