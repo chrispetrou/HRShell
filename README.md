@@ -63,7 +63,7 @@ Unless `--http` option is specified, by default `server.py` is HTTPS using _on-t
 python server.py -s tornado --cert /path/cert.pem --key /path/key.pem
 ```
 
-Either "real" certificates can be used or another way to generate a cert/key pair is using [openssl](https://www.openssl.org/) like so:
+Either "real" certificates can be used or another way to generate a cert/key pair is e.g. using [mkcert](https://github.com/FiloSottile/mkcert) or [openssl](https://www.openssl.org/) directly like so:
 
 ```
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
