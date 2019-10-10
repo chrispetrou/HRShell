@@ -260,7 +260,7 @@ try:
                     filepath = bdec(str(unquote(res.url.split('/')[-1]))).decode("utf-8")
                     if valid_file(filepath):
                         with open(filepath, 'rb') as f:
-                            file_contents = benc(f.read())
+                            file_contents = f.read()
                         if unix_path.match(filepath):
                             file_name = unix_path.search(filepath).group(2)
                         else:

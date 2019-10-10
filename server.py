@@ -31,10 +31,7 @@ from shellcodes import utils
 from importlib import reload
 from flask_talisman import Talisman
 from flask.logging import default_handler
-from base64 import (
-    b64decode as bdec,
-    urlsafe_b64encode as benc
-)
+from base64 import urlsafe_b64encode as benc
 from argparse import (
     SUPPRESS,
     ArgumentParser,
@@ -330,7 +327,7 @@ def handlePOST():
             filename = request.headers.get('Filename')
             if request.headers.get('Action') == 'download':
                 with open(filename, 'wb') as w:
-                    w.write(bdec(request.data))
+                    w.write(request.data)
                 print(f'[{B+G}SUCCESS{RA}] {filename} successfully downloaded!')
             else:
                 print(f'[{B+G}SUCCESS{RA}] {filename} successfully uploaded!')
