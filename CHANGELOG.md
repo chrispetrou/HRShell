@@ -1,6 +1,10 @@
-#### Version 1.7 (_TBA_)
+#### Version 1.8 (_TBA_)
 
 *   More features & bug fixes!
+
+#### Version 1.7 (_11-10-2019_)
+
+*   Implemented `history` command available when `server.py` runs on Unix systems.
 
 #### Version 1.6 (_09-10-2019_)
 

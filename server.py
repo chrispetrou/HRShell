@@ -4,7 +4,7 @@
 __Author__      = 'Christophoros Petrou (game0ver)'
 __Project_url__ = 'https://github.com/chrispetrou/HRShell'
 __License__     = 'GNU General Public License v3.0'
-__Version__     = '1.6'
+__Version__     = '1.7'
 
 import os
 import re
@@ -14,6 +14,7 @@ import ssl
 import time
 import socket
 import logging
+import inquirer
 from flask import (
     Flask,
     abort,
@@ -25,11 +26,13 @@ from flask import (
 )
 from PIL import Image
 from random import randint
-from threading import Thread
 from binascii import hexlify
-from shellcodes import utils
+from threading import Thread
 from importlib import reload
+from shellcodes import utils
+from collections import deque
 from flask_talisman import Talisman
+from inquirer.themes import GreenPassion
 from flask.logging import default_handler
 from base64 import urlsafe_b64encode as benc
 from argparse import (
@@ -70,7 +73,7 @@ log.disabled = True
 
 clientIP = ""
 emptyresponse = ('', 204)
-upload_contents, cmd_contents = "", ""
+pastcmds, upload_contents, cmd_contents = deque(maxlen=10), "", ""
 
 help_cmd        = re.compile(r'^\s*help\s*')
 exit_cmd        = re.compile(r'^\s*exit\s*')
@@ -79,6 +82,7 @@ unix_path       = re.compile(r'^\s*download\s*((.+/)*([^/]+))$')
 unix_upld       = re.compile(r'^\s*upload\s*(.+/)*([^/]+)$')
 wind_path       = re.compile(r'^\s*download\s*((.+\\)*([^/]+))$')
 wind_upld       = re.compile(r'^\s*upload\s*(.+\\)*([^/]+)$')
+history_cmd     = re.compile(r'^\s*history\s*')
 set_shellcode   = re.compile(r'^\s*set\s*shellcode\s*(\d+)\s*$')
 show_shellcodes = re.compile(r'^\s*show\s*shellcodes\s*$')
 
@@ -239,7 +243,7 @@ def valid_file(file):
 
 @app.route('/')
 def handleGET():
-    global upload_contents, cmd_contents, waiting
+    global upload_contents, cmd_contents, waiting, pastcmds
     try:
         if waiting == True:
             waiting = False
@@ -248,6 +252,18 @@ def handleGET():
         prompt = craft_prompt(request.headers, request.remote_addr)
         cmd = input(prompt)
         if cmd:
+            pastcmds.append(cmd)
+            if history_cmd.match(cmd) and pastcmds:
+                if os.name != 'nt':
+                    q = [ inquirer.List('past_cmd',
+                            message='Command history',
+                            choices=pastcmds,
+                            default=pastcmds[-1]),
+                        ]
+                    cmd = inquirer.prompt(q, theme=GreenPassion())['past_cmd']
+                else:
+                    print(f"{B}ERROR:{RA} The history command currently doesn't work on Windows systems...")
+                    return emptyresponse
             if unix_path.match(cmd):
                 return redirect(url_for('download',
                     filepath=benc(unix_path.search(cmd).group(1).encode()))

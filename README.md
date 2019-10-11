@@ -5,7 +5,7 @@
 [![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/LICENSE) 
 [![](https://img.shields.io/badge/python-3-yellow.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![](https://img.shields.io/badge/Build%20with-Flask-blueviolet.svg?style=flat-square&logo=flask&logoColor=white)](https://palletsprojects.com/p/flask/)
-[![version](https://img.shields.io/badge/version-1.6-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
+[![version](https://img.shields.io/badge/version-1.7-lightgray.svg?style=flat-square)](https://github.com/chrispetrou/HRShell/blob/master/CHANGELOG.md) 
 [![Known Vulnerabilities](https://snyk.io//test/github/chrispetrou/HRShell/badge.svg?style=flat-square&targetFile=requirements.txt)](https://snyk.io//test/github/chrispetrou/HRShell?targetFile=requirements.txt)
 
 * * *
@@ -38,6 +38,7 @@ __HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible wit
 *   Shellcode can be set/modified on the fly from the server (_more details below..._)   
 *   Proxy support on client.
 *   Directory navigation (`cd` command and variants).
+*   Interactive `history` command available on Unix systems.
 *   `download/upload/screenshot` commands available.
 *   Pipelining (`|`) & chained commands (`;`) are supported
 *   Support for every non-interactive (_like gdb, top etc..._) command

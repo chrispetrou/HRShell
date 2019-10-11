@@ -4,3 +4,4 @@ colorama
 tornado
 pyopenssl
 pillow
+inquirer
