@@ -82,7 +82,7 @@ unix_path       = re.compile(r'^\s*download\s*((.+/)*([^/]+))$')
 unix_upld       = re.compile(r'^\s*upload\s*(.+/)*([^/]+)$')
 wind_path       = re.compile(r'^\s*download\s*((.+\\)*([^/]+))$')
 wind_upld       = re.compile(r'^\s*upload\s*(.+\\)*([^/]+)$')
-history_cmd     = re.compile(r'^\s*history|^\s*h\s*')
+history_cmd     = re.compile(r'^\s*(history|h)\s*$')
 set_shellcode   = re.compile(r'^\s*set\s*shellcode\s*(\d+)\s*$')
 show_shellcodes = re.compile(r'^\s*show\s*shellcodes\s*$')
 
