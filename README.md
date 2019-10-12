@@ -14,10 +14,12 @@
 </div>
 <br>
 
-__HRShell__ is an HTTPS/HTTP reverse shell built with flask. It's compatible with __python 3.x__ and has been successfully tested on:
+__HRShell__ is an HTTPS/HTTP reverse shell built with flask and is compatible with __python 3.x__. The `client.py` has been successfully tested on:
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=linux&linux&logoColor=black) Linux ubuntu 18.04 LTS, Kali Linux 2019.3
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=apple&windows&logoColor=black) macOS Mojave
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=windows&windows&logoColor=black) Windows 7/10
+
+while the `server.py` is compatible with Unix systems (_Windows support comming soon..._)
 
 ### Features
 
@@ -131,7 +133,7 @@ The first way is pretty straight forward. However in order to use the second and
 
 Special commands:
 
-<img src="images/4.png">
+<img src="images/4.png" width="70%">
 
 Any other command is supported if it's __not__ interactive like _e.g. gdb, top etc..._ Also by typing `python server.py -h` or `python client.py -h` you can get information the server and client available arguments.
 

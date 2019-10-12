@@ -5,3 +5,4 @@ tornado
 pyopenssl
 pillow
 inquirer
+tabulate

