@@ -176,20 +176,20 @@ def ValidateFile(file):
         raise ArgumentTypeError(f'{R+file+RA} is not readable')
 
 def validatePort(port):
-    if isinstance(int(port), int): # python3
+    if isinstance(int(port), int):
         if 1 < int(port) < 65536:
             return int(port)
         else:
-            raise ArgumentTypeError('[x] Port must be in range 1-65535')
+            raise ArgumentTypeError(f'{R}Port must be in range 1-65535{RA}')
     else:
-        raise ArgumentTypeError('Port must be in range 1-65535')
+        raise ArgumentTypeError(f'{R}Port must be in range 1-65535{RA}')
 
 def validateIP(ip):
     try:
         if socket.inet_aton(ip):
             return ip
     except socket.error:
-        raise ArgumentTypeError('[x] Invalid IP provided')
+        raise ArgumentTypeError(f'{R}Invalid IP provided{RA}')
 
 def craft_prompt(headers, ip):
     try:
@@ -419,33 +419,39 @@ if __name__ == '__main__':
     args = console()
     if args.client:
         clientIP = args.client
-    if args.server=='flask':
-        startloading()
-        if args.http:
-            app.run(host=args.host, port=args.port, debug=False)
-        else:
-            Talisman(app)
-            if args.cert and args.key:
-                app.run(host=args.host, port=args.port, debug=False, ssl_context=(args.cert, args.key))
+    try:
+        if args.server=='flask':
+            startloading()
+            if args.http:
+                app.run(host=args.host, port=args.port, debug=False)
             else:
-                app.run(host=args.host, port=args.port, debug=False, ssl_context='adhoc')
-    else:
-        if args.http:
-            slowprint(f"* Serving on: {B+BL}http://{args.host}:{args.port}{RA}")
-            http_server = HTTPServer(WSGIContainer(app))
-        elif args.cert and args.key:
-            slowprint(f"* Serving on: {B+BL}https://{args.host}:{args.port}{RA}")
-            Talisman(app)
-            ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-            ssl_ctx.load_cert_chain(args.cert, args.key)
-            http_server = HTTPServer(WSGIContainer(app), ssl_options=ssl_ctx)
+                Talisman(app)
+                if args.cert and args.key:
+                    app.run(host=args.host, port=args.port, 
+                        debug=False, ssl_context=(args.cert, args.key))
+                else:
+                    app.run(host=args.host, port=args.port, 
+                        debug=False, ssl_context='adhoc')
         else:
-            print(f"{B}ERROR:{RA} Both cert and key must be specified\nor disable TLS with --http option.")
-            sys.exit(0)
-        slowprint(f"* {B}Server:{RA} Tornado-WSGI")
-        startloading()
-        try:
-            http_server.listen(args.port, address=args.host)
-            IOLoop.instance().start()
-        except KeyboardInterrupt:
-            sys.exit(0)
+            if args.http:
+                slowprint(f"* Serving on: {B+BL}http://{args.host}:{args.port}{RA}")
+                http_server = HTTPServer(WSGIContainer(app))
+            elif args.cert and args.key:
+                slowprint(f"* Serving on: {B+BL}https://{args.host}:{args.port}{RA}")
+                Talisman(app)
+                ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+                ssl_ctx.load_cert_chain(args.cert, args.key)
+                http_server = HTTPServer(WSGIContainer(app), ssl_options=ssl_ctx)
+            else:
+                print(f"{B}ERROR:{RA} Both cert and key must be specified\nor disable TLS with --http option.")
+                sys.exit(0)
+            slowprint(f"* {B}Server:{RA} Tornado-WSGI")
+            startloading()
+            try:
+                http_server.listen(args.port, address=args.host)
+                IOLoop.instance().start()
+            except KeyboardInterrupt:
+                sys.exit(0)
+    except socket.gaierror:
+        print(f"{R}[x] Invalid host provided.{RA}")
+        sys.exit(0)
