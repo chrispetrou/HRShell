@@ -28,7 +28,7 @@ while the `server.py` is compatible with Unix systems (_Windows support comming 
     -   Either using _on-the-fly_ certificates or
     -   By specifying a cert/key pair (_more details below..._)
 *   Shellcode injection 💉 (_more details below..._)
-    -   Either shellcode injection in a thread of the current running process
+    -   Either shellcode injection in a thread/spawned-process of the current running process
         *   Platforms supported so far: 
             *   __Windows x86__   
             *   __Unix x86__
@@ -108,7 +108,7 @@ There are two "modes" of shellcode injection using the two following commands re
 
 <img src="images/1.png">
 
-2. `inject shellcode`: Using this command a new thread of our current process is created and the shellcode injection occurs in its memory space. As a result our HTTP(S) shell is not affected by the injection. The platforms where this command can be applied are: __Unix x86/x64, Windows x86__ platforms!
+2. `inject shellcode`: Using this command a new thread (_or spawned process on unix systems_) of our current process is created and the shellcode injection occurs in its memory space. As a result our HTTP(S) shell is not affected by the injection. The platforms where this command can be applied are: __Unix x86/x64, Windows x86__ platforms!
 
 <img src="images/2.png">
 
