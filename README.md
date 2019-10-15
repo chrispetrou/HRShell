@@ -41,7 +41,7 @@ while the `server.py` is compatible with Unix systems (_Windows support comming 
 *   Proxy support on client.
 *   Directory navigation (`cd` command and variants).
 *   Interactive `history` command available on Unix systems.
-*   `download/upload/screenshot` commands available.
+*   `download/upload/screenshot/hex` commands available.
 *   Pipelining (`|`) & chained commands (`;`) are supported
 *   Support for every non-interactive (_like gdb, top etc..._) command
 *   Server is both HTTP & HTTPS capable.
