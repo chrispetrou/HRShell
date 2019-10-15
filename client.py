@@ -214,10 +214,10 @@ def hexdump(src, length=16):
     FILTER, lines = ''.join([(len(repr(chr(x))) == 3) and chr(x) or '.' for x in range(256)]), []
     for c in range(0, len(src), length):
         chars = src[c:c+length]
-        hex = ' '.join(["%02x" % ord(x) for x in chars]) if type(chars) is str else ' '.join(['{:02x}'.format(x) for x in chars])
-        if len(hex) > 24: hex = "%s %s" % (hex[:24], hex[24:])
+        hexa = ' '.join(["%02x" % ord(x) for x in chars]) if type(chars) is str else ' '.join(['{:02x}'.format(x) for x in chars])
+        if len(hexa) > 24: hexa = "%s %s" % (hexa[:24], hexa[24:])
         printable = ''.join(["%s" % ((ord(x) <= 127 and FILTER[ord(x)]) or '.') for x in chars]) if type(chars) is str else ''.join(['{}'.format((x <= 127 and FILTER[x]) or '.') for x in chars])
-        lines.append("%08x:  %-*s  |%s|" % (c, length*3, hex, printable))
+        lines.append("%08x:  %-*s  |%s|" % (c, length*3, hexa, printable))
     return '\n'.join(lines)
 
 username, error = exec_cmd("whoami")
