@@ -255,7 +255,7 @@ def handleGET():
             ret(.1)
         prompt = craft_prompt(request.headers, request.remote_addr)
         cmd = input(prompt)
-        if cmd:
+        if cmd or not cmd.startswith('#'):
             pastcmds.append(cmd)
             if history_cmd.match(cmd) and pastcmds:
                 pastcmds.pop()
