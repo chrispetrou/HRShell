@@ -74,8 +74,8 @@ progress = {
 log = logging.getLogger('werkzeug')
 log.disabled = True
 
-clientIP, chosen_shellcode = "", None
 emptyresponse = ('', 204)
+clientIP, chosen_shellcode = "", None
 pastcmds, upload_contents, cmd_contents = deque(maxlen=10), "", ""
 
 help_cmd        = re.compile(r'^\s*(help|\?)\s*$')
