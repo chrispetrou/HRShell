@@ -331,7 +331,9 @@ def handleGET():
                     print(f"[x] There is no shellcode with id: {shc_id}")
                     return emptyresponse
             elif help_cmd.match(cmd):
-                print(tabulate(commands, headers=["Command","Description"]))
+                print(tabulate(commands, 
+                    headers=["Command","Description"])
+                )
                 return emptyresponse
             elif exit_cmd.match(cmd):
                 cmd_contents = cmd
