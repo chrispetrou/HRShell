@@ -213,7 +213,7 @@ To install the server-requirements:
 pip install -r requirements.txt --upgrade --user
 ```
 
-#### TODO
+#### :pushpin: TODO
 - [ ] Add more commands and features.
 - [ ] Fix potential bugs.
 
