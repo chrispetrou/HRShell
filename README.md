@@ -16,7 +16,7 @@
 
 __HRShell__ is an HTTPS/HTTP reverse shell built with flask and is compatible with __python 3.x__. The `client.py` has been successfully tested on:
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=linux&linux&logoColor=black) Linux ubuntu 18.04 LTS, Kali Linux 2019.3
-*   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=apple&windows&logoColor=black) macOS Mojave
+*   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=apple&windows&logoColor=black) macOS Mojave/Catalina
 *   ![](https://img.shields.io/badge/-white.svg??style=for-the-badge&logo=windows&windows&logoColor=black) Windows 7/10
 
 while the `server.py` is compatible with Unix systems (_Windows support comming soon..._)
