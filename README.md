@@ -54,7 +54,7 @@ while the `server.py` is compatible with Unix systems (_Windows support comming 
 ### Details
 * * *
 
-### Stealthy :squirrel:
+### Stealthy :shipit:
 HRShell is stealthy since it uses the HTTP(S) protocol as the communication method between client and server. In addition when TLS is in use the traffic is also encrypted. Also if the CERT is not hand coded on client-side (_which is a feasible option_) and the `upload` command is not used, then `client.py` doesn't touches the disk at all.
 
 ### TLS 🔑
