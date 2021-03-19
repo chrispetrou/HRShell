@@ -3,6 +3,6 @@ flask_talisman
 colorama
 tornado
 pyopenssl
-pillow==7.1.0
+pillow==8.1.1
 inquirer
 tabulate
